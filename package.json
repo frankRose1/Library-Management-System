@@ -1,0 +1,28 @@
+{
+  "name": "library-manager",
+  "version": "0.0.1",
+  "description": "Using Node.js and Sequelize to create a library managmement system.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frankRose1/Library-Management-System.git"
+  },
+  "keywords": [
+    "Node.js",
+    "Sequelize",
+    "SQL",
+    "Express",
+    "PUG"
+  ],
+  "author": "Frank Rosendorf",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "pug": "^2.0.3"
+  }
+}

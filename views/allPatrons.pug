@@ -1,0 +1,18 @@
+extends layout
+
+include mixins/_patron
+
+block content
+  h1 Patrons
+  p
+    a.button(href="/new/patron") Create New Patron
+  table
+    thead
+      tr
+        th Name
+        th Address
+        th Library ID
+        th Zip
+    tbody
+      each patron in patrons
+        +patron(patron)

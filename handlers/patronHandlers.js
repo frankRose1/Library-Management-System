@@ -3,8 +3,30 @@ const Patron = require('../models').Patrons;
 //patron handlers container
 const patronHandlers = {};
 
-// n post requests instead of sending a 500 all the time, it may be that a required field was not filled out
+// on post requests instead of sending a 500 all the time, it may be that a required field was not filled out
 //send back an error PUG and the form, along with the error message we set up in the model
+
+//will also need to send back the ID because there is a link that routes to each individual patron page
+patronHandlers.allPatrons = (req, res) => {
+    Patron.findAll({
+        attributes: [
+            'first_name',
+            'last_name',
+            'address',
+            'email',
+            'library_id',
+            'zip_code',
+            'id'
+        ]
+    })
+    .then(patrons => {
+        res.render('allPatrons', {title: "All Patrons", patrons});
+    })
+    .catch(err => {
+        res.sendStatus(500);
+    });
+};
+
 patronHandlers.patronDetails = (req, res) => {
     Patron.findAll({
         attributes: {exclude : ['createdAt', 'updatedAt']}

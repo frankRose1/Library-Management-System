@@ -28,12 +28,14 @@ module.exports = (sequelize, DataTypes) => {
     first_published: {
       type: DataTypes.INTEGER,
       validate: {
-        notEmpty: {
-          msg: 'Please provide a published date(e.g. 2005).'
+        isNumeric: {
+          msg: "Please provide a number date (e.g.) 2005"
         }
       }
-    }
-  }, {});
+    },
+  }, {
+    timestamps: false
+  });
   Books.associate = function(models) {
     // associations can be defined here
   };

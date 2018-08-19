@@ -23,15 +23,34 @@ bookHandlers.allBooks = (req, res) => {
 }
 
 bookHandlers.newBookForm = (req, res) => {
-    res.render('newBookForm', {title: 'Add New Book'});
+    res.render('newBookForm', { title: 'New Book', book: {} });
 };
 
-//post route, where we create a new entry in the DB
-// validate all fields in the DB
-// if there is an error, re render the form with error messages
 bookHandlers.addNewBook = (req, res) => {
     //get data from the form and add it to the DB
-    //validate all fields are present because all are required
+    //only title, author, and genre are required. date_published is optional
+        Book.create( req.body)
+        .then(book => {
+            //if it saves successfull. redirect to all books
+            res.redirect('/books/all');
+        })
+        .catch(err => {
+            if (err.name == 'SequelizeValidationError') {
+                //re-render the form with info about the errors, and auto fill the inputs with values from "book"
+                //to get the error message when looping over errors -> error.message
+                res.render('newBookForm', {
+                    title: 'New Book',
+                    errors: err.errors,
+                    book: Book.build(req.body)
+                });
+            } else {
+                throw err;
+            }
+        })
+        .catch(err => {
+            //server error saving the new book
+            res.sendStatus(500);
+        });
 };
 
 module.exports = bookHandlers;

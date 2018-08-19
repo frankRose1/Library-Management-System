@@ -6,7 +6,7 @@ const patronHandlers = {};
 // on post requests instead of sending a 500 all the time, it may be that a required field was not filled out
 //send back an error PUG and the form, along with the error message we set up in the model
 
-//will also need to send back the ID because there is a link that routes to each individual patron page
+//TODO send back id for link to individual patron page
 patronHandlers.allPatrons = (req, res) => {
     Patron.findAll({
         attributes: [
@@ -27,17 +27,17 @@ patronHandlers.allPatrons = (req, res) => {
     });
 };
 
-patronHandlers.patronDetails = (req, res) => {
-    Patron.findAll({
-        attributes: {exclude : ['createdAt', 'updatedAt']}
-    })
-        .then(patrons => {
-            res.json(patrons);
-        })
-        .catch(err => {
-            console.error(err);
-            res.send(500);
-        });
-};
+// patronHandlers.patronDetails = (req, res) => {
+//     Patron.findAll({
+//         attributes: {exclude : ['createdAt', 'updatedAt']}
+//     })
+//         .then(patrons => {
+//             res.json(patrons);
+//         })
+//         .catch(err => {
+//             console.error(err);
+//             res.send(500);
+//         });
+// };
 
 module.exports = patronHandlers;

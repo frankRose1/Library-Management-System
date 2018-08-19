@@ -14,10 +14,11 @@ router.get('/', (req, res) => {
 });
 
 //patron routes
-//to create a new patron --> /new/patron
-router.get('/all/patrons', patronHandlers.allPatrons);
+//to create a new patron --> /patrons/new
+router.get('/patrons/all', patronHandlers.allPatrons);
 
 //books routes
+router.get('/books/all', bookHandlers.allBooks);
 
 //loans routes
 

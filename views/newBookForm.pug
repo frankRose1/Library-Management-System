@@ -1,19 +1,19 @@
 extends layout
 
 block content
-  h1= title
+  h1 New Book
   form(action="/books/new" method="POST")
     p
       label(for="title") Title
-      input#title(name="title" type="text" value=`${book.title || ""}`)
+      input#title(name="title" type="text" required)
     p
       label(for="author") Author
-      input#author(name="author" type="text" value=`${book.author || ""}` )
+      input#author(name="author" type="text" required)
     p
       label(for="genre") Genre
-      input#genre(name="genre" type="text" value=`${book.genre || ""}` )
+      input#genre(name="genre" type="text" required)
     p
       label(for="first_published") First Published
-      input#first_published(name="first_published" type="text" value=`${book.first_published || ""}` placeholder="(e.g.) 2005")
+      input#first_published(name="first_published" type="text" placeholder="(e.g.) 2005" required)
     p
       input(type="submit" value="Create New Book")

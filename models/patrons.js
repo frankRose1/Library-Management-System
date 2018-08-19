@@ -38,9 +38,6 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           msg: 'Zip-code is required.'
-        },
-        isNumeric: {
-          msg: 'Zip Code must be a number.'
         }
       }
     },
@@ -52,9 +49,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     }
-  }, {
-    timestamps: false
-  });
+  }, {});
   Patrons.associate = function(models) {
     // associations can be defined here
   };

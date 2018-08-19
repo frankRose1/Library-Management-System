@@ -13,13 +13,16 @@ router.get('/', (req, res) => {
     res.render('home', {title: 'Home'});
 });
 
+//book routes
+router.get('/books/all', bookHandlers.allBooks);
+router.get('/books/new', bookHandlers.newBookForm);
+router.post('/books/new', bookHandlers.addNewBook);
+
 //patron routes
 //to create a new patron --> /patrons/new
 router.get('/patrons/all', patronHandlers.allPatrons);
 
-//books routes
-router.get('/books/all', bookHandlers.allBooks);
-
-//loans routes
+//loan routes
+router.get('/loans/all', loanHandlers.allLoans);
 
 module.exports = router;

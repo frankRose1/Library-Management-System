@@ -22,4 +22,16 @@ bookHandlers.allBooks = (req, res) => {
     });
 }
 
+bookHandlers.newBookForm = (req, res) => {
+    res.render('newBookForm', {title: 'Add New Book'});
+};
+
+//post route, where we create a new entry in the DB
+// validate all fields in the DB
+// if there is an error, re render the form with error messages
+bookHandlers.addNewBook = (req, res) => {
+    //get data from the form and add it to the DB
+    //validate all fields are present because all are required
+};
+
 module.exports = bookHandlers;

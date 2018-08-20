@@ -51,12 +51,12 @@ bookHandlers.addNewBook = (req, res) => {
 };
 
 //render the form for updating a book, populated with a books existing information
+//TODO ==> will need to also find loans associated with this book ID**
 bookHandlers.getBookDetails = (req, res) => {
     //render a form with the books information
     const bookId = req.params.id;
     Book.findById(bookId)
         .then(book => {
-            console.log(book);
             res.render('updateBookForm', {title: 'Book Details', book});
         })
         .catch(err => {
@@ -65,9 +65,33 @@ bookHandlers.getBookDetails = (req, res) => {
     
 };
 
-//update the book in the db once the form is submitted
-bookHandlers.updateBook = (req, res) => {
 
+bookHandlers.updateBook = (req, res) => {
+    const bookId = req.params.id;
+    const bookTitle = req.body.title;
+    Book.findById(bookId)
+        .then(book => book.update(req.body))
+        .then(book => {
+            //if the book updates and saves without error redirect to all books page
+            res.redirect('/books/all');
+        })
+        .catch(err => {
+            //bookId retains the reference to the book incase the form is submitted with errors
+            if (err.name == 'SequelizeValidationError') {
+                res.render('updateBookForm', {
+                    title: 'Book Details',
+                    errors: err.errors,
+                    book: Book.build(req.body),
+                    bookId,
+                    bookTitle
+                });
+            } else {
+                throw err;
+            }
+        })
+        .catch(err => {
+            res.sendStatus(500);
+        });
 };
 
 module.exports = bookHandlers;

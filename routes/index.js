@@ -18,7 +18,7 @@ router.get('/books/all', bookHandlers.allBooks);
 router.get('/books/new', bookHandlers.newBookForm);
 router.post('/books/new', bookHandlers.addNewBook);
 router.get('/book/details/:id', bookHandlers.getBookDetails);
-router.put('/book/details/:id', bookHandlers.updateBook);
+router.post('/book/details/:id', bookHandlers.updateBook);
 
 //patron routes
 //to create a new patron --> /patrons/new

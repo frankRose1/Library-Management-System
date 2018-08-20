@@ -1,8 +1,15 @@
 extends layout
 
+include mixins/_errorMessage
+
 block content
-  h1 Book: #{book.title}
-  form(action=`/book/details/${book.id}` method="PUT")
+  h1 Book: #{book.title || bookTitle}
+  form(action=`/book/details/${book.id || bookId}` method="post")
+    if errors
+      h2.error Oooops!
+      ul.error
+        each error in errors
+          +errorMessage(error)
     p
       label(for="title") Title
       input#title(type="text" name="title" value=`${book.title || ''}`)

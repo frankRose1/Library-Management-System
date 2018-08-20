@@ -4,7 +4,7 @@ include mixins/_errorMessage
 
 block content
   h1= title
-  form(action="/books/new" method="POST")
+  form(action="/books/new" method="post")
     if errors
       h2.error Oooops!
       ul.error

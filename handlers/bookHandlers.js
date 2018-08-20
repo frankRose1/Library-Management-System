@@ -27,7 +27,6 @@ bookHandlers.newBookForm = (req, res) => {
 };
 
 bookHandlers.addNewBook = (req, res) => {
-    //get data from the form and add it to the DB
     //only title, author, and genre are required. date_published is optional
         Book.create( req.body)
         .then(book => {
@@ -37,7 +36,6 @@ bookHandlers.addNewBook = (req, res) => {
         .catch(err => {
             if (err.name == 'SequelizeValidationError') {
                 //re-render the form with info about the errors, and auto fill the inputs with values from "book"
-                //to get the error message when looping over errors -> error.message
                 res.render('newBookForm', {
                     title: 'New Book',
                     errors: err.errors,

@@ -92,3 +92,9 @@ input {
 input[type=text], select {
   margin-left: 10px;
 }
+
+/* error messages */
+h2.error,
+ul.error li {
+  color: #D8000C;
+}

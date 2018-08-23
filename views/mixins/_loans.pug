@@ -1,0 +1,11 @@
+mixin loan(loan, book)
+  tr
+    td
+      a(href=`/book/details/${book.id || bookId}`) #{book.title || bookTitle}
+    td
+      a(href="patron_detail.html") Patron Name
+    td= loan.loaned_on
+    td= loan.return_by
+    td= loan.returned_on
+    td
+      a.button(href="return_book.html") Return Book  

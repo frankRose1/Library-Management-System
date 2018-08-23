@@ -1,4 +1,5 @@
 const Book = require('../models').Books;
+const Loan = require('../models').Loans;
 
 // book handlers container
 const bookHandlers = {};
@@ -51,13 +52,23 @@ bookHandlers.addNewBook = (req, res) => {
 };
 
 //render the form for updating a book, populated with a books existing information
-//TODO ==> will need to also find loans associated with this book ID**
+//TODO: ==> will need to also find loans associated with this book ID**
 bookHandlers.getBookDetails = (req, res) => {
-    //render a form with the books information
+    
     const bookId = req.params.id;
     Book.findById(bookId)
         .then(book => {
-            res.render('updateBookForm', {title: 'Book Details', book});
+            //find any loans associated with this book
+            Loan.findAll({
+                where: {book_id: bookId}
+            })
+                .then(loans => {
+                    res.render('updateBookForm', {title: 'Book Details', book, loans});
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.sendStatus(500);
+                });
         })
         .catch(err => {
             res.sendStatus(404); //book not found
@@ -65,7 +76,8 @@ bookHandlers.getBookDetails = (req, res) => {
     
 };
 
-
+//TODO: show any outstanding loans if they are present
+//loans table has the following fields id(loan id), book_id, patron_id, loaned_on, return_by, returned_on
 bookHandlers.updateBook = (req, res) => {
     const bookId = req.params.id;
     const bookTitle = req.body.title;

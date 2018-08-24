@@ -26,5 +26,6 @@ router.get('/patrons/all', patronHandlers.allPatrons);
 
 //loan routes
 router.get('/loans/all', loanHandlers.allLoans);
+router.get('/loans/filter/:query', loanHandlers.filterLoans);
 
 module.exports = router;

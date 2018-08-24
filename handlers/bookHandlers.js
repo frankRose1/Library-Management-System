@@ -52,7 +52,7 @@ bookHandlers.addNewBook = (req, res) => {
 };
 
 //render the form for updating a book, populated with a books existing information
-//TODO: ==> will need to also find loans associated with this book ID**
+//TODO: the loan table should show a link to the book, patron page, and a button to return the book if its been loaned
 bookHandlers.getBookDetails = (req, res) => {
     
     const bookId = req.params.id;
@@ -76,8 +76,7 @@ bookHandlers.getBookDetails = (req, res) => {
     
 };
 
-//TODO: show any outstanding loans if they are present
-//loans table has the following fields id(loan id), book_id, patron_id, loaned_on, return_by, returned_on
+//FIXME: Use flahs messaging and redirect if the form is submitted incorrectly because we will lose the loan if we simply re-render the form
 bookHandlers.updateBook = (req, res) => {
     const bookId = req.params.id;
     const bookTitle = req.body.title;

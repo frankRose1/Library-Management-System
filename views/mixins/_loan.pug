@@ -1,4 +1,4 @@
-mixin loan(loan, book)
+mixin loan(loan, book = {})
   tr
     td
       a(href=`/book/details/${book.id || bookId}`) #{book.title || bookTitle}

@@ -1,4 +1,27 @@
 extends layout
 
+include mixins/_loan
+
 block content
+  h1= title
+  p
+    a.button(href="new_loan") Create New Loan
+  p Filters 
+    a(href="/loans/all") All Loans 
+    | |
+    a(href="/loans/filter/overdue") Overdue 
+    | | 
+    a(href="/loans/filter/checked") Checked Out 
   
+  table
+    thead
+      tr
+        th Book
+        th Patron
+        th Loaned On
+        th Return By
+        th Returned On
+        th Action
+    tbody
+      each loan in loans
+        +loan(loan)

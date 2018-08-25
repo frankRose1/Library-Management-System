@@ -1,4 +1,6 @@
 const Loan = require('../models').Loans;
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 //loan handlers container
 const loanHandlers = {};
@@ -13,8 +15,7 @@ const loanHandlers = {};
 // loaned_on: "2015-12-10",
 // return_by: "2020-10-20",
 // returned_on: null
-
-//FIXME: "return button" should only show if the book loan is utstanding
+//TODO: Query for userNames and Book titles associated with each loan
 loanHandlers.allLoans = (req, res) =>{
     Loan.findAll({
         attributes: { exclude: ['created_at', 'updated_at'] }
@@ -27,15 +28,42 @@ loanHandlers.allLoans = (req, res) =>{
     });
 };
 
-//TODO: filter the loans by overdue and by checked out status
 loanHandlers.filterLoans = (req, res) => {
     const {query} = req.params;
     if (query == 'checked') {
-        console.log('checked');
-        res.sendStatus(200);
+        //SELECT * FROM loan WHERE loaned_on < Date.now() AND returned_on IS NULL
+        Loan.findAll({
+            where: {
+                loaned_on: { 
+                    [Op.lt]: Date.now()
+                },
+                returned_on: {
+                    [Op.eq]: null
+                }
+            }
+        }).then(loans => {
+            res.render('allLoans', {titile: 'Loans', loans});
+        }).catch(err => {
+            console.error(err);
+            res.sendStatus(500);
+        });
     } else if (query == 'overdue') {
-        console.log('overdue');
-        res.sendStatus(200);
+        //SELECT * FROM loan WHERE return_by > DATE.now() AND returned_on IS NULL
+        Loan.findAll({
+            where: {
+                return_by: {
+                    [Op.lt]: Date.now()
+                },
+                returned_on: {
+                    [Op.eq]: null
+                }
+            }
+        }).then(loans => {
+            res.render('allLoans', {titile: 'Loans', loans});
+        }).catch(err => {
+            console.error(err);
+            res.sendStatus(500);
+        });
     }
 };
 

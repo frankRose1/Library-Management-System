@@ -27,5 +27,7 @@ router.get('/patrons/all', patronHandlers.allPatrons);
 //loan routes
 router.get('/loans/all', loanHandlers.allLoans);
 router.get('/loans/filter/:query', loanHandlers.filterLoans);
+router.get('/loans/new', loanHandlers.newLoanForm);
+router.post('/loans/new', loanHandlers.addNewLoan);
 
 module.exports = router;

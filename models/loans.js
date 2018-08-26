@@ -9,8 +9,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     timestamps: false
   });
+  //BelongsTo associations are associations where the foreign key for the one-to-one relation exists on the source model
+    //Loans is the source model, the foreign key is referring to the id's on the Books and Patrons model
   Loans.associate = function(models) {
     // associations can be defined here
+    Loans.belongsTo(models.Books, {foreignKey: 'book_id'});
+    Loans.belongsTo(models.Patrons, {foreignKey: 'patron_id'});
   };
+
   return Loans;
 };

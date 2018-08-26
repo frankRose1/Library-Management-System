@@ -37,7 +37,8 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false
   });
   Books.associate = function(models) {
-    // associations can be defined here
+    //has many will place the foreign key on the target, in this case Loans
+    Books.hasMany(models.Loans, {targetKey: 'book_id'});
   };
   return Books;
 };

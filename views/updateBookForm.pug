@@ -26,7 +26,6 @@ block content
     p
       input(type="submit" value="Update")
   
-  if loans.length > 0
     h2 Loan History
     table
       thead
@@ -37,6 +36,6 @@ block content
           th Return By
           th Returned on
           th Action
-      tbody
-        each loan in loans
-          +loan(loan, book)
+      //- tbody
+      //-   each loan in loans
+      //-     +loan(loan, book)

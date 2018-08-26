@@ -1,11 +1,12 @@
-const Book = require('../models').Books;
-const Loan = require('../models').Loans;
+const Books = require('../models').Books;
+const Loans = require('../models').Loans;
+const Patrons = require('../models').Patrons;
 
 // book handlers container
 const bookHandlers = {};
 
 bookHandlers.allBooks = (req, res) => {
-    Book.findAll({
+    Books.findAll({
         attributes: [
             'title',
             'author',
@@ -28,7 +29,7 @@ bookHandlers.newBookForm = (req, res) => {
 
 bookHandlers.addNewBook = (req, res) => {
     //only title, author, and genre are required. date_published is optional
-        Book.create( req.body)
+    Books.create( req.body)
             .then(book => {
                 //if it saves successfull. redirect to all books
                 res.redirect('/books/all');
@@ -39,7 +40,7 @@ bookHandlers.addNewBook = (req, res) => {
                     res.render('newBookForm', {
                         title: 'New Book',
                         errors: err.errors,
-                        book: Book.build(req.body)
+                        book: Books.build(req.body)
                     });
                 } else {
                     throw err;
@@ -52,35 +53,41 @@ bookHandlers.addNewBook = (req, res) => {
 };
 
 //render the form for updating a book, populated with a books existing information
-//TODO: the loan table should show a link to the book, patron page, and a button to return the book if its been loaned
 bookHandlers.getBookDetails = (req, res) => {
-    
     const bookId = req.params.id;
-    Book.findById(bookId)
+    Books.findById(bookId)
         .then(book => {
             //find any loans associated with this book
-            Loan.findAll({
-                where: {book_id: bookId}
-            })
-                .then(loans => {
+            Loans.findAll({
+                where: {book_id: bookId},
+                include: [{
+                    model: Patrons,
+                    attributes:['first_name', 'last_name', 'id']
+                },
+                {
+                    model: Books
+                }]
+            }).then(loans => {
+                if (book) {
+                    console.log(loans);
                     res.render('updateBookForm', {title: 'Book Details', book, loans});
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.sendStatus(500);
-                });
-        })
-        .catch(err => {
+                } else {
+                    res.sendStatus(404);
+                }     
+            }).catch(err => {
+                console.log(err);
+                res.sendStatus(500);
+            });
+        }).catch(err => {
             res.sendStatus(404); //book not found
         });
-    
 };
 
-//FIXME: Use flahs messaging and redirect if the form is submitted incorrectly because we will lose the loan if we simply re-render the form
+
 bookHandlers.updateBook = (req, res) => {
     const bookId = req.params.id;
     const bookTitle = req.body.title;
-    Book.findById(bookId)
+    Books.findById(bookId)
         .then(book => book.update(req.body))
         .then(book => {
             //if the book updates and saves without error redirect to all books page

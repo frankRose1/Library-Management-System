@@ -1,5 +1,5 @@
 const moment = require('moment');
-const Loan = require('../models').Loans;
+const Loans = require('../models').Loans;
 const Books = require('../models').Books;
 const Patrons = require('../models').Patrons;
 const Sequelize = require('sequelize');
@@ -20,8 +20,8 @@ const loanHandlers = {};
 // returned_on: null
 //TODO: Query for userNames and Book titles associated with each loan
 loanHandlers.allLoans = (req, res) =>{
-    Loan.findAll({
-        includes: [
+    Loans.findAll({
+        include: [
             {
                 model: Patrons
             },
@@ -31,10 +31,9 @@ loanHandlers.allLoans = (req, res) =>{
     })
     .then(loans => {
         console.log(loans);
-        res.render('allLoans', {title: 'Loans', loans});
+        res.render('loansListing', {title: 'Loans', loans});
     })
     .catch(err => {
-        console.log(err);
         res.sendStatus(500);
     });
 };
@@ -43,7 +42,7 @@ loanHandlers.filterLoans = (req, res) => {
     const {query} = req.params;
     if (query == 'checked') {
         //SELECT * FROM loan WHERE loaned_on < Date.now() AND returned_on IS NULL
-        Loan.findAll({
+        Loans.findAll({
             where: {
                 loaned_on: { 
                     [Op.lt]: Date.now()
@@ -53,14 +52,14 @@ loanHandlers.filterLoans = (req, res) => {
                 }
             }
         }).then(loans => {
-            res.render('allLoans', {titile: 'Loans', loans});
+            res.render('loansListing', {titile: 'Loans', loans});
         }).catch(err => {
             console.error(err);
             res.sendStatus(500);
         });
     } else if (query == 'overdue') {
         //SELECT * FROM loan WHERE return_by < DATE.now() AND returned_on IS NULL
-        Loan.findAll({
+        Loans.findAll({
             where: {
                 return_by: {
                     [Op.lt]: Date.now()
@@ -70,7 +69,7 @@ loanHandlers.filterLoans = (req, res) => {
                 }
             }
         }).then(loans => {
-            res.render('allLoans', {titile: 'Loans', loans});
+            res.render('loansListing', {titile: 'Loans', loans});
         }).catch(err => {
             console.error(err);
             res.sendStatus(500);

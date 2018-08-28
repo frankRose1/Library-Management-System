@@ -69,7 +69,7 @@ bookHandlers.getBookDetails = (req, res) => {
                 }]
             }).then(loans => {
                 if (book) {
-                    console.log(loans);
+                    console.log({ patron : loans.Patron, book: loans.book});
                     res.render('updateBookForm', {title: 'Book Details', book, loans});
                 } else {
                     res.sendStatus(404);

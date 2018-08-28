@@ -1,9 +1,9 @@
-mixin loan(loan, book = {})
+mixin loan(loan)
   tr
     td
-      a(href=`/book/details/${book.id || bookId}`) #{book.title || bookTitle}
+      a(href=`/book/details/${loan.Book.id || bookId}`) #{loan.Book.title || bookTitle}
     td
-      a(href="patron_detail.html") Patron Name
+      a(href=`/patron/details/${loan.Patron.id}`)= `${loan.Patron.first_name} ${loan.Patron.last_name}`
     td= loan.loaned_on
     td= loan.return_by
     td= loan.returned_on

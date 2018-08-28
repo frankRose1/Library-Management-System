@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   Books.associate = function(models) {
     //has many will place the foreign key on the target, in this case Loans
-    Books.hasMany(models.Loans, {targetKey: 'book_id'});
+    Books.hasMany(models.Loans, {foreignKey: 'book_id', targetKey: 'id'});
   };
   return Books;
 };

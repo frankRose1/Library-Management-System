@@ -123,8 +123,46 @@ loanHandlers.newLoanForm = (req, res) => {
         });
 };
 
+//TODO: Query for all of the patrons and Books again in the case that the form needs to be re-rendered
 loanHandlers.addNewLoan = (req, res) => {
+    const {loaned_on, return_by} = req.body;
 
+    Loans.create(req.body)
+        .then(loan => {
+            console.log(loan);
+            //if it saves succefully, redirect to all loans
+            res.redirect('/loans/all');
+        })
+        .catch(err => {
+            if (err.name == 'SequelizeValidationError') {
+                //re render the form with the errors
+                Books.findAll()
+                    .then(books => {
+                        Patrons.findAll()
+                            .then(patrons => {
+                                res.render('newLoanForm', {
+                                    title: 'New Loan',
+                                    errors: err.errors,
+                                    books,
+                                    patrons,
+                                    loaned_on,
+                                    return_by
+                                });
+                            }).catch(err => {
+                                res.sendStatus(500);
+                            });
+                    }).catch(err => {
+                        res.sendStatus(500);
+                    });
+            } else {
+                throw err;
+            }
+        })
+        .catch(err => {
+            //server error creating new loan
+            console.error(err);
+            res.sendStatus(500);
+        });
 };
 
 module.exports = loanHandlers;

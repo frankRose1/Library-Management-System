@@ -1,16 +1,20 @@
 extends layout
 
+include mixins/_errorMessages
+
 block content
   h1= title
   form(action="/loans/new" method="POST")
+    if errors
+      +errorMessages(errors)
     p
       label(for="book_id") Book
-      select#book_id
+      select#book_id(name="book_id")
         each book in books
           option(value=`${book.id}`)= book.title
     p
       label(for="patron_id") Patron
-      select#patron_id
+      select#patron_id(name="patron_id")
         each patron in patrons
           option(value=`${patron.id}`)= `${patron.first_name} ${patron.last_name}`
     p
@@ -19,3 +23,5 @@ block content
     p
       label(for="return_by") Return by:
       input#return_by(type="text" name="return_by" value=`${return_by}`)
+    p
+      input(type="submit" value="Create New Loan")

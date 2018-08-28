@@ -1,11 +1,61 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   var Loans = sequelize.define('Loans', {
-    book_id: DataTypes.INTEGER,
-    patron_id: DataTypes.INTEGER,
-    loaned_on: DataTypes.DATE,
-    return_by: DataTypes.DATE,
-    returned_on: DataTypes.DATE
+    book_id: {
+      type: DataTypes.INTEGER,
+      validate: {
+        notEmpty: {
+          msg: 'Book ID is required.'
+        },
+        isNumeric: {
+          msg: 'Book ID must be a number.'
+        }
+      }
+    },
+    patron_id: {
+      type: DataTypes.INTEGER,
+      validate: {
+        notEmpty: {
+          msg: 'Patron ID is required.'
+        },
+        isNumeric: {
+          msg: 'Patron ID must be a number.'
+        }
+      }
+    },
+    loaned_on: {
+      type: DataTypes.DATE,
+      validate: {
+        notEmpty: {
+          msg: '"Loaned on" field can not be blank.'
+        },
+        isDate: {
+          msg: '"Loaned on" field must be a date.'
+        }
+      }
+    },
+    return_by: {
+      type: DataTypes.DATE,
+      validate: {
+        notEmpty: {
+          msg: '"Return by" field can not be blank.'
+        },
+        isDate: {
+          msg: '"Return By" field must be a date(YYYY-MM-DD).'
+        }
+      }
+    },
+    returned_on: {
+      type: DataTypes.DATE,
+      validate: {
+        notEmpty: {
+          msg: '"Returned on" can not be blank.'
+        },
+        isDate: {
+          msg: '"Returned on" field must be a date(YYYY-MM-DD).'
+        }
+      }
+    },
   }, {
     timestamps: false
   });

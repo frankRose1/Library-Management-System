@@ -1,16 +1,13 @@
 extends layout
 
-include mixins/_errorMessage
+include mixins/_errorMessages
 include mixins/_loan
 
 block content
   h1 Book: #{book.title || bookTitle}
   form(action=`/book/details/${book.id || bookId}` method="post")
     if errors
-      h2.error Oooops!
-      ul.error
-        each error in errors
-          +errorMessage(error)
+      +errorMessages(errors)
     p
       label(for="title") Title
       input#title(type="text" name="title" value=`${book.title || ''}`)

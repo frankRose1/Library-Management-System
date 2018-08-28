@@ -91,8 +91,8 @@ loanHandlers.filterLoans = (req, res) => {
 };
 
 // Following FIelds are required
-    //book_id
-    //patron_id
+    //book_id put it on an option
+    //patron_id put it on tan option
     //loaned_on
     //return_by
 //loaned_on should be autpopulated with todays date
@@ -101,8 +101,26 @@ loanHandlers.filterLoans = (req, res) => {
 loanHandlers.newLoanForm = (req, res) => {
     //configure the auto populated fields here loaned_on and return_by moment js
     const loaned_on = moment().format('YYYY-MM-DD');
-    const return_by = moment(loaned_on, 'YYYY-MM-DD').endOf('week').fromNow();
-    res.render('newLoanForm', {title: 'New Loan', loaned_on, return_by});
+    const return_by = moment().add(1, 'week').format('YYYY-MM-DD');
+    Books.findAll()
+        .then(books => {
+            Patrons.findAll()
+                .then(patrons => {
+                    res.render('newLoanForm', {
+                                    title: 'New Loan',
+                                    books,
+                                    patrons,
+                                    loaned_on, 
+                                    return_by
+                    });
+                })
+                .catch(err => {
+                    res.sendStatus(500);
+                });
+        })
+        .catch(err => {
+            res.sendStatus(500);
+        });
 };
 
 loanHandlers.addNewLoan = (req, res) => {

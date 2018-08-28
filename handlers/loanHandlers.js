@@ -30,7 +30,6 @@ loanHandlers.allLoans = (req, res) =>{
             }]
     })
     .then(loans => {
-        console.log(loans);
         res.render('loansListing', {title: 'Loans', loans});
     })
     .catch(err => {
@@ -43,6 +42,13 @@ loanHandlers.filterLoans = (req, res) => {
     if (query == 'checked') {
         //SELECT * FROM loan WHERE loaned_on < Date.now() AND returned_on IS NULL
         Loans.findAll({
+            include:[
+                {
+                    model: Patrons
+                },
+                {
+                    model: Books
+                }],
             where: {
                 loaned_on: { 
                     [Op.lt]: Date.now()
@@ -60,6 +66,13 @@ loanHandlers.filterLoans = (req, res) => {
     } else if (query == 'overdue') {
         //SELECT * FROM loan WHERE return_by < DATE.now() AND returned_on IS NULL
         Loans.findAll({
+            include: [
+                {
+                    model: Patrons
+                },
+                {
+                    model: Books
+                }],
             where: {
                 return_by: {
                     [Op.lt]: Date.now()

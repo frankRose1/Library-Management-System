@@ -5,7 +5,6 @@ const Books = require('../models').Books;
 //patron handlers container
 const patronHandlers = {};
 
-//TODO: send back id for link to individual patron page
 patronHandlers.allPatrons = (req, res) => {
     Patrons.findAll()
         .then(patrons => {
@@ -15,24 +14,19 @@ patronHandlers.allPatrons = (req, res) => {
         });
 };
 
-//find the patron by ID
-//include the loan history for this patron
+//include the loan history of each patron
 patronHandlers.patronDetails = (req, res) => {
     const {id} = req.params;
     Patrons.findOne({
         where : {
             id: id
         },
-        //include the loans with their books
-        include: [
-            {
+        include: [{
                 model: Loans,
                 include: [Books]
-            }
-        ]
+            }]
     }).then(patron => {
         if (patron) {
-            console.log(patron);
             const title = `${patron.first_name} ${patron.last_name}`;
             res.render('patronDetails', {title , patron});
         } else {
@@ -43,8 +37,55 @@ patronHandlers.patronDetails = (req, res) => {
     });
 };
 
+//TODO: Test this out once new patrons can be added 
 patronHandlers.updatePatron = (req, res) => {
-    console.log(req.params);
+    const {id} = req.params;
+    Patrons.findById(id)
+        .then(patron => {
+            if (patron) {
+                return patron.update(req.body);
+            } else {
+                //patron not found
+                res.sendStatus(404);
+            }
+        }).catch(err => {
+            if (err.name == 'SequelizeValidationError') {
+                Patrons.findOne({
+                    where: {
+                        id: id
+                    },
+                    include: [{
+                            model: Loans,
+                            include: [Books]
+                        }]
+                }).then(patron => {
+                    if (patron) {
+                        res.render('patronDetails', {
+                            title: `${patron.first_name} ${patron.last_name}`,
+                            patron,
+                            errors: err.errors
+                        });
+                    } else {
+                        res.sendStatus(404);
+                    }
+                }).catch(err => {
+                    res.sendStatus(500);
+                });
+            } else {
+                throw err;
+            }
+        }).catch(err => {
+            res.sendStatus(500);
+        });
+};
+
+patronHandlers.newPatronForm = (req, res) => {
+    res.render('newPatronForm', {title: 'New Patron', patron: {}});
+};
+
+//if we encounter errors, re render the form 
+    // {patron: Patrons.build(req.body)}
+patronHandlers.createNewPatron = (req, res) => {
     res.sendStatus(200);
 };
 

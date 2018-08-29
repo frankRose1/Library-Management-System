@@ -4,7 +4,7 @@ include mixins/_errorMessages
 
 block content
   h1= title
-  form(action="/loans/new" method="POST")
+  form(action="/loans/new" method="post")
     if errors
       +errorMessages(errors)
     p

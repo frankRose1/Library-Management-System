@@ -1,6 +1,8 @@
 const Books = require('../models').Books;
 const Loans = require('../models').Loans;
 const Patrons = require('../models').Patrons;
+const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 
 // book handlers container
 const bookHandlers = {};
@@ -14,11 +16,9 @@ bookHandlers.allBooks = (req, res) => {
             'first_published',
             'id'
         ]
-    })
-    .then(books => {
+    }).then(books => {
         res.render('allBooks', {title: 'All Books', books});
-    })
-    .catch(err => {
+    }).catch(err => {
         res.sendStatus(500);
     });
 }
@@ -27,14 +27,60 @@ bookHandlers.newBookForm = (req, res) => {
     res.render('newBookForm', { title: 'New Book', book: {} });
 };
 
+bookHandlers.filterBooks = (req, res) => {
+    const {query} = req.params;
+    //only books that are checked out && overdue
+    if (query == 'overdue') {
+        //SELECT * FROM books WHERE LOANS return_by < Date.now() && returned_on IS NULL
+        Books.findAll({
+            include : [
+                {
+                    model: Loans,
+                    where: {
+                        return_by : {
+                            [Op.lt]: Date.now()
+                        },
+                        returned_on: {
+                            [Op.eq]: null
+                        }
+                    }
+                }]
+        }).then(books => {
+            res.render('allBooks', {title: 'Overdue Books', books});
+        }).catch(err => {
+            res.sendStatus(500);
+        });
+    }
+    //all books that are currently checked out
+    if (query == 'checked') {
+        // SELECT * FROM books WHERE LOANS returned_on IS NULL && loaned_on < Date.now()
+        Books.findAll({
+            include: [
+                {
+                    model: Loans,
+                    where: {
+                        returned_on: {
+                            [Op.eq]: null
+                        },
+                        loaned_on: {
+                            [Op.lt]: Date.now()
+                        }
+                    }
+                }]
+        }).then(books => {
+            res.render('allBooks', {title: 'Checked Out Books', books});
+        }).catch(err => {
+            res.sendStatus(500);
+        });
+    }
+};
+
 bookHandlers.addNewBook = (req, res) => {
-    //only title, author, and genre are required. date_published is optional
-    Books.create( req.body)
+    Books.create(req.body)
             .then(book => {
-                //if it saves successfull. redirect to all books
+                //if it saves successfull, redirect to all books
                 res.redirect('/books/all');
-            })
-            .catch(err => {
+            }).catch(err => {
                 if (err.name == 'SequelizeValidationError') {
                     //re-render the form with info about the errors, and auto fill the inputs with values from "book"
                     res.render('newBookForm', {
@@ -45,14 +91,12 @@ bookHandlers.addNewBook = (req, res) => {
                 } else {
                     throw err;
                 }
-            })
-            .catch(err => {
-                //server error saving the new book
+            }).catch(err => {
                 res.sendStatus(500);
             });
 };
 
-//render the form for updating a book, populated with a books existing information
+
 bookHandlers.getBookDetails = (req, res) => {
     const bookId = req.params.id;
     Books.findById(bookId)
@@ -74,11 +118,10 @@ bookHandlers.getBookDetails = (req, res) => {
                     res.sendStatus(404);
                 }     
             }).catch(err => {
-                console.log(err);
                 res.sendStatus(500);
             });
         }).catch(err => {
-            res.sendStatus(404); //book not found
+            res.sendStatus(500);
         });
 };
 

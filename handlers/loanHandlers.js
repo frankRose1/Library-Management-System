@@ -8,17 +8,6 @@ const Op = Sequelize.Op;
 //loan handlers container
 const loanHandlers = {};
 
-//loans table has the following fields id(loan id), book_id, patron_id, loaned_on, return_by, returned_on
-//needs the book title, patron name, loaned on, return_by, returned_on, action** 
-    //action is a button Called "return", if the book is not uet returned, show this button
-//getting the book title, and the person name will require queries to the other tables
-// id: 1,
-// book_id: 15, --> to get the title of the book
-// patron_id: 2, --> to get the patrons name
-// loaned_on: "2015-12-10",
-// return_by: "2020-10-20",
-// returned_on: null
-//TODO: Query for userNames and Book titles associated with each loan
 loanHandlers.allLoans = (req, res) =>{
     Loans.findAll({
         include: [
@@ -58,12 +47,13 @@ loanHandlers.filterLoans = (req, res) => {
                 }
             }
         }).then(loans => {
-            res.render('loansListing', {titile: 'Loans', loans});
+            res.render('loansListing', {title: 'Checked Out Books', loans});
         }).catch(err => {
-            console.error(err);
             res.sendStatus(500);
         });
-    } else if (query == 'overdue') {
+    } 
+
+    if (query == 'overdue') {
         //SELECT * FROM loan WHERE return_by < DATE.now() AND returned_on IS NULL
         Loans.findAll({
             include: [
@@ -82,16 +72,15 @@ loanHandlers.filterLoans = (req, res) => {
                 }
             }
         }).then(loans => {
-            res.render('loansListing', {titile: 'Loans', loans});
+            res.render('loansListing', {title: 'Overdue Books', loans});
         }).catch(err => {
-            console.error(err);
             res.sendStatus(500);
         });
     }
 };
 
 loanHandlers.newLoanForm = (req, res) => {
-    //configure the auto populated fields here loaned_on and return_by moment js
+    //configure the auto populated fields here loaned_on and return_by
     const loaned_on = moment().format('YYYY-MM-DD');
     const return_by = moment().add(1, 'week').format('YYYY-MM-DD');
     Books.findAll()
@@ -121,7 +110,6 @@ loanHandlers.addNewLoan = (req, res) => {
 
     Loans.create(req.body)
         .then(loan => {
-            console.log(loan);
             //if it saves succefully, redirect to all loans
             res.redirect('/loans/all');
         })
@@ -152,7 +140,6 @@ loanHandlers.addNewLoan = (req, res) => {
         })
         .catch(err => {
             //server error creating new loan
-            console.error(err);
             res.sendStatus(500);
         });
 };
@@ -172,16 +159,16 @@ loanHandlers.returnBookForm = (req, res) => {
                 model: Books
             }]
     }).then(loan => {
-        res.render('returnBookForm', {title: 'Return Book', loan, todaysDate});
+        if (loan) {
+            res.render('returnBookForm', {title: 'Return Book', loan, todaysDate});
+        } else {
+            res.sendStatus(404);
+        }
     }).catch(err => {
-        res.sendStatus(404);
+        res.sendStatus(500);
     });
 };
 
-//TODO:
-//find the book by req.params.id
-//update the returned_on status to be todays date, the value defaulted in the form
-//will need to re-render the form if errors
 loanHandlers.updateLoanStatus = (req, res) => {
     const {id} = req.params;
     const {returned_on} = req.body;
@@ -189,12 +176,10 @@ loanHandlers.updateLoanStatus = (req, res) => {
         .then(loan => loan.update({returned_on}))
         .then(loan => {
             //on a succesfull update, redirect to the loans page
-            console.log('updated');
             res.redirect('/loans/all');
         }).catch(err => {
             if (err.name == 'SequelizeValidationError') {
                 //get the loan and associated patron/book
-                console.log('validation error');
                 Loans.findOne({
                     where: {
                         id: id

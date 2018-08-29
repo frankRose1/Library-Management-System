@@ -11,6 +11,7 @@ router.get('/', (req, res) => {
 
 //book routes
 router.get('/books/all', bookHandlers.allBooks);
+router.get('/books/filter/:query', bookHandlers.filterBooks);
 router.get('/books/new', bookHandlers.newBookForm);
 router.post('/books/new', bookHandlers.addNewBook);
 router.get('/book/details/:id', bookHandlers.getBookDetails);

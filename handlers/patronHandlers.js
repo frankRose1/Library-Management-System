@@ -23,9 +23,11 @@ patronHandlers.patronDetails = (req, res) => {
         where : {
             id: id
         },
+        //include the loans with their books
         include: [
             {
-                model: Loans
+                model: Loans,
+                include: [Books]
             }
         ]
     }).then(patron => {

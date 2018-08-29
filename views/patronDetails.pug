@@ -1,5 +1,6 @@
 extends layout
 
+include mixins/_loan
 include mixins/_errorMessages
 
 block content
@@ -25,7 +26,20 @@ block content
     p
       label(for="library_id") Library ID
       input#library_id(type="text" name="library_id" value=`${patron.library_id}`)
+    p
+      input(type="submit" value="Update")
 
-  //- if patron.Loan.length > 0
-  //- h2 Loan History
-  //- table
+  if patron.Loans.length > 0
+    h2 Loan History
+    table
+      thead
+        tr
+          th Book
+          th Patron
+          th Loaned On
+          th Return By
+          th Returned On
+          th Action
+      tbody
+        each loan in patron.Loans
+          +loan(loan, patron)

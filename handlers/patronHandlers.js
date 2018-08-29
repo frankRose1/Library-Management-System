@@ -83,10 +83,31 @@ patronHandlers.newPatronForm = (req, res) => {
     res.render('newPatronForm', {title: 'New Patron', patron: {}});
 };
 
+//TODO:
 //if we encounter errors, re render the form 
     // {patron: Patrons.build(req.body)}
 patronHandlers.createNewPatron = (req, res) => {
-    res.sendStatus(200);
+    Patrons.create(req.body)
+        .then(patron => {
+            //on a successful create, redirect to patrons/all
+            console.log('success');
+            res.redirect('/patrons/all');
+        }).catch(err => {
+            console.log(err);
+            if (err.name == 'SequelizeValidationError') {
+                //re render the form with validation errors
+                res.render('newPatronForm', {
+                    title: 'New Patron',
+                    patron: Patrons.build(req.body),
+                    errors: err.errors
+                });
+            } else {
+                throw err;
+            }
+        }).catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+        });
 };
 
 module.exports = patronHandlers;

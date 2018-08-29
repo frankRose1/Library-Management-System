@@ -18,6 +18,8 @@ router.post('/book/details/:id', bookHandlers.updateBook);
 
 //patron routes
 router.get('/patrons/all', patronHandlers.allPatrons);
+router.get('/patron/details/:id', patronHandlers.patronDetails);
+router.post('/patron/details/:id', patronHandlers.updatePatron);
 
 //loan routes
 router.get('/loans/all', loanHandlers.allLoans);

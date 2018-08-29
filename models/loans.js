@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       validate: {
         notEmpty: {
-          msg: '"Returned on" can not be blank.'
+          msg: '"Returned on" can\t be blank.'
         },
         isDate: {
           msg: '"Returned on" field must be a date(YYYY-MM-DD).'

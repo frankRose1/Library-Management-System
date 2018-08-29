@@ -178,17 +178,49 @@ loanHandlers.returnBookForm = (req, res) => {
     });
 };
 
+//TODO:
 //find the book by req.params.id
 //update the returned_on status to be todays date, the value defaulted in the form
 //will need to re-render the form if errors
 loanHandlers.updateLoanStatus = (req, res) => {
     const {id} = req.params;
+    const {returned_on} = req.body;
     Loans.findById(id)
+        .then(loan => loan.update({returned_on}))
         .then(loan => {
-
+            //on a succesfull update, redirect to the loans page
+            console.log('updated');
+            res.redirect('/loans/all');
         }).catch(err => {
-            //loan not found
-            res.sendStatus(404);
+            if (err.name == 'SequelizeValidationError') {
+                //get the loan and associated patron/book
+                console.log('validation error');
+                Loans.findOne({
+                    where: {
+                        id: id
+                    },
+                    include: [
+                        {
+                            model: Patrons
+                        },
+                        {
+                            model: Books
+                    }]
+                }).then(loan => {
+                    res.render('returnBookForm', {
+                        title: 'Return Books',
+                        todaysDate: returned_on,
+                        errors: err.errors,
+                        loan
+                    });
+                }).catch(err => {
+                    res.sendStatus(500); //loan not found
+                });
+            } else {
+                throw err;
+            }
+        }).catch(err => {
+            res.sendStatus(500);
         });
 };
 

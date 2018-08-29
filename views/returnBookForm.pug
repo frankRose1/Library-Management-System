@@ -1,12 +1,16 @@
 extends layout
 
+include mixins/_errorMessages
+
 block content
 	h1= title
+	if errors
+		+errorMessages(errors)
 	p #[strong Book Title:] #{loan.Book.title}
 	p #[strong Loaned By:] #{loan.Patron.first_name} #{loan.Patron.last_name}
 	p #[strong Loaned On:] #{loan.loaned_on}
 	p #[strong Return By:] #{loan.return_by}
-	form
+	form(action=`/loan/return/${loan.id}` method="POST")
 		p
 			label(for="returned_on") Returned On:
 			input#returned_on(type="text" name="returned_on" value=`${todaysDate}`)

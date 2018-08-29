@@ -69,7 +69,6 @@ bookHandlers.getBookDetails = (req, res) => {
                 }]
             }).then(loans => {
                 if (book) {
-                    console.log({ patron : loans.Patron, book: loans.book});
                     res.render('updateBookForm', {title: 'Book Details', book, loans});
                 } else {
                     res.sendStatus(404);
@@ -83,7 +82,7 @@ bookHandlers.getBookDetails = (req, res) => {
         });
 };
 
-
+// TODO: Query for the loans and patrons again if we need to re-render the form on error
 bookHandlers.updateBook = (req, res) => {
     const bookId = req.params.id;
     const bookTitle = req.body.title;
@@ -111,5 +110,6 @@ bookHandlers.updateBook = (req, res) => {
             res.sendStatus(500);
         });
 };
+
 
 module.exports = bookHandlers;

@@ -29,5 +29,7 @@ router.get('/loans/all', loanHandlers.allLoans);
 router.get('/loans/filter/:query', loanHandlers.filterLoans);
 router.get('/loans/new', loanHandlers.newLoanForm);
 router.post('/loans/new', loanHandlers.addNewLoan);
+router.get('/loan/return/:id', loanHandlers.returnBookForm);
+router.post('/loan/return/:id', loanHandlers.updateBookStatus);
 
 module.exports = router;

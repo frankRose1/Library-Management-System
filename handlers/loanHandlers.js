@@ -90,14 +90,6 @@ loanHandlers.filterLoans = (req, res) => {
     }
 };
 
-// Following FIelds are required
-    //book_id put it on an option
-    //patron_id put it on tan option
-    //loaned_on
-    //return_by
-//loaned_on should be autpopulated with todays date
-    //return by should be populated with a day 7 days in the future
-//Patron and Book field should be select boxes where you choose the patron or book id
 loanHandlers.newLoanForm = (req, res) => {
     //configure the auto populated fields here loaned_on and return_by moment js
     const loaned_on = moment().format('YYYY-MM-DD');
@@ -123,7 +115,7 @@ loanHandlers.newLoanForm = (req, res) => {
         });
 };
 
-//TODO: Query for all of the patrons and Books again in the case that the form needs to be re-rendered
+//FIXME: the dates are being saved as "2018-08-28 00:00:00.000 +00:00", change it to YYYY-MM-DD
 loanHandlers.addNewLoan = (req, res) => {
     const {loaned_on, return_by} = req.body;
 
@@ -162,6 +154,41 @@ loanHandlers.addNewLoan = (req, res) => {
             //server error creating new loan
             console.error(err);
             res.sendStatus(500);
+        });
+};
+
+loanHandlers.returnBookForm = (req, res) => {
+    const todaysDate = moment().format('YYYY-MM-DD');
+    const {id} = req.params;
+    Loans.findOne({
+        where: {
+            id: id
+        },
+        include: [
+            {
+                model: Patrons
+            },
+            {
+                model: Books
+            }]
+    }).then(loan => {
+        res.render('returnBookForm', {title: 'Return Book', loan, todaysDate});
+    }).catch(err => {
+        res.sendStatus(404);
+    });
+};
+
+//find the book by req.params.id
+//update the returned_on status to be todays date, the value defaulted in the form
+//will need to re-render the form if errors
+loanHandlers.updateLoanStatus = (req, res) => {
+    const {id} = req.params;
+    Loans.findById(id)
+        .then(loan => {
+
+        }).catch(err => {
+            //loan not found
+            res.sendStatus(404);
         });
 };
 

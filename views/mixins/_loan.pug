@@ -9,4 +9,4 @@ mixin loan(loan)
     td= loan.returned_on
     td
       if !loan.returned_on
-        a.button(href="return_book.html") Return Book  
+        a.button(href=`/loan/return/${loan.id}`) Return Book  

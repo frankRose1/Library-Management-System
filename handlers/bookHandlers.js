@@ -99,36 +99,33 @@ bookHandlers.addNewBook = (req, res) => {
 
 bookHandlers.getBookDetails = (req, res) => {
     const bookId = req.params.id;
-    Books.findById(bookId)
-        .then(book => {
-            //find any loans associated with this book
-            Loans.findAll({
-                where: {book_id: bookId},
+    Books.findOne({
+        where: {
+            id: bookId
+        },
+        include: [
+            {
+                model: Loans,
                 include: [{
-                    model: Patrons,
-                    attributes:['first_name', 'last_name', 'id']
-                },
-                {
-                    model: Books
-                }]
-            }).then(loans => {
-                if (book) {
-                    res.render('updateBookForm', {title: 'Book Details', book, loans});
-                } else {
-                    res.sendStatus(404);
-                }     
-            }).catch(err => {
-                res.sendStatus(500);
-            });
-        }).catch(err => {
-            res.sendStatus(500);
-        });
+                        model: Patrons,
+                        attributes: ['first_name', 'last_name', 'id']
+                    }
+                ]
+            }]
+    }).then(book => {
+        if (book) {
+            res.render('updateBookForm', {title: 'Book Details', book});
+        } else {
+            res.sendStatus(404);
+        }
+    }).catch(err => {
+        res.sendStatus(500);
+    });;
 };
 
-// TODO: Query for the loans and patrons again if we need to re-render the form on error
+
 bookHandlers.updateBook = (req, res) => {
     const bookId = req.params.id;
-    const bookTitle = req.body.title;
     Books.findById(bookId)
         .then(book => book.update(req.body))
         .then(book => {
@@ -136,14 +133,30 @@ bookHandlers.updateBook = (req, res) => {
             res.redirect('/books/all');
         })
         .catch(err => {
-            //bookId retains the reference to the book incase the form is submitted with errors
             if (err.name == 'SequelizeValidationError') {
-                res.render('updateBookForm', {
-                    title: 'Book Details',
-                    errors: err.errors,
-                    book: Book.build(req.body),
-                    bookId,
-                    bookTitle
+                Books.findOne({
+                    where: {
+                        id: bookId
+                    },
+                    include: [{
+                            model: Loans,
+                            include: [{
+                                model: Patrons,
+                                attributes: ['first_name', 'last_name', 'id']
+                            }]
+                        }]
+                }).then(book => {
+                    if (book) {
+                        res.render('updateBookForm', {
+                            title: 'Book Details',
+                            errors: err.errors,
+                            book
+                        });
+                    } else {
+                        res.sendStatus(404);
+                    }
+                }).catch(err => {
+                    res.sendStatus(500);
                 });
             } else {
                 throw err;

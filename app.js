@@ -15,6 +15,5 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/', router);
 
-//error handlers
 
 module.exports = app;

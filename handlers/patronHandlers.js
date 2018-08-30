@@ -37,7 +37,7 @@ patronHandlers.patronDetails = (req, res) => {
     });
 };
 
-//TODO: Test this out once new patrons can be added 
+
 patronHandlers.updatePatron = (req, res) => {
     const {id} = req.params;
     Patrons.findById(id)
@@ -83,9 +83,7 @@ patronHandlers.newPatronForm = (req, res) => {
     res.render('newPatronForm', {title: 'New Patron', patron: {}});
 };
 
-//TODO:
-//if we encounter errors, re render the form 
-    // {patron: Patrons.build(req.body)}
+
 patronHandlers.createNewPatron = (req, res) => {
     Patrons.create(req.body)
         .then(patron => {
@@ -105,7 +103,6 @@ patronHandlers.createNewPatron = (req, res) => {
                 throw err;
             }
         }).catch(err => {
-            console.log(err);
             res.sendStatus(500);
         });
 };

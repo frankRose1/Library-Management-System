@@ -5,7 +5,6 @@ const Patrons = require('../models').Patrons;
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
-//loan handlers container
 const loanHandlers = {};
 
 loanHandlers.allLoans = (req, res) =>{
@@ -198,7 +197,7 @@ loanHandlers.updateLoanStatus = (req, res) => {
                         loan
                     });
                 }).catch(err => {
-                    res.sendStatus(500); //loan not found
+                    res.sendStatus(404); //loan not found
                 });
             } else {
                 throw err;

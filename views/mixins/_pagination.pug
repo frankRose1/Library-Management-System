@@ -1,10 +1,10 @@
-mixin pagination(page, pages, count)
+mixin pagination(category, page, pages, count)
   .pagination
     .pagination_prev
       if page > 1
-        a(href=`/books/all/page/${page - 1}`) Prev
+        a(href=`/${category}/all/page/${page - 1}`) Prev
     .pagination_text
       p Page #{page} of #{pages} - #{count} total results
     .pagination_next
       if page < pages
-        a(href=`/books/all/page/${parseFloat(page) + 1}`) Next
+        a(href=`/${category}/all/page/${parseFloat(page) + 1}`) Next

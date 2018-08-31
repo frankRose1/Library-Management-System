@@ -4,14 +4,13 @@ const Patrons = require('../models').Patrons;
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
 
-// book handlers container
 const bookHandlers = {};
 
 bookHandlers.allBooks = (req, res) => {
     const page = req.params.page || 1; //current page
-    const limit = 5; //show 10 books per page
+    const limit = 5; //show this amount of books per page
     const offset = (page * limit) - limit; //skip value
-    
+
     //skip by the amount of the offset value and fetch the value of limit after that 
     Books.findAndCountAll({
         offset: offset,
@@ -20,13 +19,19 @@ bookHandlers.allBooks = (req, res) => {
         //get book count and number of pages
         const count = books.count;
         const pages = Math.ceil(count / limit);
+        //if the user tries to access a page that returns no results, redirect them to the final page
+        if (!books.rows.length && offset) {
+            res.redirect(`/books/all/page/${pages}`);
+            return;
+        }
+
         res.render('allBooks', {
-                        title: 'All Books', 
-                        books: books.rows, 
-                        page, 
-                        pages, 
-                        count
-                    });
+                                title: 'All Books', 
+                                books: books.rows, 
+                                page, 
+                                pages, 
+                                count
+                            });
     }).catch(err => {
         res.sendStatus(500);
     });

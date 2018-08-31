@@ -126,3 +126,39 @@ ul.error li {
   margin-left: 10px;
   font-size: 85px;
 }
+
+/* Pagination Div Styles */
+.pagination {
+  display: flex;
+  align-items: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.05);
+  max-width: 750px;
+}
+
+.pagination_prev {
+  flex: 0 0 auto;
+  padding: 1rem 1rem 1rem 3rem;
+}
+
+.pagination_prev a:before {
+  margin-right: 1rem;
+  content: '\2190'; 
+}
+
+.pagination_text {
+  padding: 1 rem;
+  text-align: center;
+  flex: 3 0 auto;
+}
+
+.pagination_next{
+  flex: 0 0 auto;
+  padding: 1rem 3rem 1rem 1rem;
+}
+
+.pagination_next a:after {
+  margin-left: 1rem;
+  content: '\2192'; 
+}

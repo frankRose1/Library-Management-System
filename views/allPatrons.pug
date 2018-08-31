@@ -1,6 +1,7 @@
 extends layout
 
 include mixins/_patron
+include mixins/_pagination
 
 block content
   h1 Patrons
@@ -17,3 +18,4 @@ block content
     tbody
       each patron in patrons
         +patron(patron)
+  +pagination('patrons', page, pages, count)

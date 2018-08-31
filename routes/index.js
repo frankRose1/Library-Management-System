@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 
 //book routes
 router.get('/books/all', bookHandlers.allBooks);
-router.get('/books/all/page/:page', bookHandlers.allBooks);
+router.get('/books/all/page/:page', bookHandlers.allBooks); //for pagination
 router.get('/books/filter/:query', bookHandlers.filterBooks);
 router.get('/books/new', bookHandlers.newBookForm);
 router.post('/books/new', bookHandlers.addNewBook);
@@ -20,6 +20,7 @@ router.post('/book/details/:id', bookHandlers.updateBook);
 
 //patron routes
 router.get('/patrons/all', patronHandlers.allPatrons);
+router.get('/patrons/all/page/:page', patronHandlers.allPatrons); //for pagination
 router.get('/patrons/new', patronHandlers.newPatronForm);
 router.post('/patrons/new', patronHandlers.createNewPatron);
 router.get('/patron/details/:id', patronHandlers.patronDetails);

@@ -2,16 +2,36 @@ const Patrons = require('../models').Patrons;
 const Loans = require('../models').Loans;
 const Books = require('../models').Books;
 
-//patron handlers container
 const patronHandlers = {};
 
 patronHandlers.allPatrons = (req, res) => {
-    Patrons.findAll()
-        .then(patrons => {
-            res.render('allPatrons', {title: "All Patrons", patrons});
-        }).catch(err => {
-            res.sendStatus(500);
-        });
+    const page = req.params.page || 1;
+    const limit = 5;
+    const offset = (page * limit) - limit;
+
+    Patrons.findAndCountAll({
+        offset: offset,
+        limit: limit
+    }).then(patrons => {
+        const count = patrons.count;
+        const pages = Math.ceil(count / limit);
+        //if the user tries to access a page that will exceed the number of items in the DB, redirect them to the highest possible page
+            //the length would be falsey and a skip value would have to be present
+        if (!patrons.rows.length && offset) {
+            res.redirect(`/patrons/all/page/${pages}`);
+            return;
+        }
+
+        res.render('allPatrons', {
+                                    title: "All Patrons", 
+                                    patrons: patrons.rows,
+                                    page,
+                                    pages,
+                                    count
+                                });
+    }).catch(err => {
+        res.sendStatus(500);
+    });
 };
 
 //include the loan history of each patron
@@ -88,10 +108,8 @@ patronHandlers.createNewPatron = (req, res) => {
     Patrons.create(req.body)
         .then(patron => {
             //on a successful create, redirect to patrons/all
-            console.log('success');
             res.redirect('/patrons/all');
         }).catch(err => {
-            console.log(err);
             if (err.name == 'SequelizeValidationError') {
                 //re render the form with validation errors
                 res.render('newPatronForm', {

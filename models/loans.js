@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     loaned_on: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       validate: {
         notEmpty: {
           msg: '"Loaned on" field can not be blank.'
@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     return_by: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       validate: {
         notEmpty: {
           msg: '"Return by" field can not be blank.'
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     returned_on: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       validate: {
         notEmpty: {
           msg: '"Returned on" can\t be blank.'

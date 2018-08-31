@@ -27,11 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     first_published: {
       type: DataTypes.INTEGER,
-      validate: {
-        isNumeric: {
-          msg: "Please provide a number date (e.g.) 2005"
-        }
-      }
+      allowNull: true
     },
   }, {
     timestamps: false

@@ -8,16 +8,25 @@ const { Op } = Sequelize;
 const bookHandlers = {};
 
 bookHandlers.allBooks = (req, res) => {
-    Books.findAll({
-        attributes: [
-            'title',
-            'author',
-            'genre',
-            'first_published',
-            'id'
-        ]
+    const page = req.params.page || 1; //current page
+    const limit = 5; //show 10 books per page
+    const offset = (page * limit) - limit; //skip value
+    
+    //skip by the amount of the offset value and fetch the value of limit after that 
+    Books.findAndCountAll({
+        offset: offset,
+        limit: limit
     }).then(books => {
-        res.render('allBooks', {title: 'All Books', books});
+        //get book count and number of pages
+        const count = books.count;
+        const pages = Math.ceil(count / limit);
+        res.render('allBooks', {
+                        title: 'All Books', 
+                        books: books.rows, 
+                        page, 
+                        pages, 
+                        count
+                    });
     }).catch(err => {
         res.sendStatus(500);
     });

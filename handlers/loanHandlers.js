@@ -104,7 +104,6 @@ loanHandlers.newLoanForm = (req, res) => {
         });
 };
 
-//FIXME: the dates are being saved as "2018-08-28 00:00:00.000 +00:00", change it to YYYY-MM-DD
 loanHandlers.addNewLoan = (req, res) => {
     const {loaned_on, return_by} = req.body;
 

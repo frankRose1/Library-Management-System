@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const router = require('./routes/index');
+const {notFound, renderError} = require('./handlers/errorHandlers');
 
 const app = express();
 
@@ -14,6 +15,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/', router);
+
+app.use(notFound);
+
+app.use(renderError);
 
 
 module.exports = app;

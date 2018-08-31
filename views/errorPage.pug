@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    .errors--container
+        h2 Oops! 
+        h2 We had a problem with your request.
+        .error-status-container
+            h3 #{status}: #{message}
+            i.fas.fa-exclamation-triangle
+        p
+            | Back to
+            a(href="/") Home Page

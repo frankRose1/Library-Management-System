@@ -98,3 +98,31 @@ h2.error,
 ul.error li {
   color: #D8000C;
 }
+
+.errors--container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+.errors--container h2 {font-size: 3.4rem;}
+.errors--container h3 {font-size: 4.5rem;}
+.errors--container p{font-size: 2rem;}
+.errors--container a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #1da1f2;
+  margin-left: 5px;
+}
+
+.error-status-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 25px 0;
+}
+
+.error-status-container i { 
+  margin-left: 10px;
+  font-size: 85px;
+}

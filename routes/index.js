@@ -19,6 +19,7 @@ router.get('/books/new', bookHandlers.newBookForm);
 router.post('/books/new', bookHandlers.addNewBook);
 router.get('/book/details/:id', bookHandlers.getBookDetails);
 router.post('/book/details/:id', bookHandlers.updateBook);
+router.post('/books/search', bookHandlers.searchBooks); // search feature
 
 //patron routes
 router.get('/patrons/all', patronHandlers.allPatrons);

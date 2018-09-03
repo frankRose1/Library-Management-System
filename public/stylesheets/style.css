@@ -93,8 +93,13 @@ input[type=text], select {
   margin-left: 10px;
 }
 
-p.no-history {
+p.no-history,
+p.no-results {
   font-size: 23px;
+}
+
+span.query {
+  font-weight: bold;
 }
 
 /* error messages */

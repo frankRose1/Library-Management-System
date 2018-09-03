@@ -207,5 +207,29 @@ bookHandlers.updateBook = (req, res) => {
         });
 };
 
+//Users can search a book by title or author. search is case insensitive
+bookHandlers.searchBooks = (req, res) => {
+    const {search_query} = req.body;
+    Books.findAll({
+        where: {
+            [Op.or] : [
+                {
+                    title: {
+                        [Op.like] : `%${search_query}%`
+                    }
+                },
+                { 
+                    author: {
+                        [Op.like]: `%${search_query}%`
+                    }
+                }
+            ]
+        }
+    }).then(books => {
+        res.render('allBooks', {title: 'Books', books, search_query});
+    }).catch(err => {
+        res.sendStatus(500);
+    });
+};
 
 module.exports = bookHandlers;

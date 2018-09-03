@@ -2,7 +2,8 @@ extends layout
 
 include mixins/_book
 include mixins/_pagination
-include mixins/_searchForm 
+include mixins/_searchForm
+include mixins/_noResults
 
 block content
   +searchForm('books')
@@ -15,6 +16,7 @@ block content
     a(href="/books/filter/overdue") Overdue
     | | 
     a(href="/books/filter/checked") Checked Out
+    
   if books.length > 0
     table
       thead
@@ -29,8 +31,5 @@ block content
     if page && pages && count
       +pagination('books', false, undefined, page, pages, count)
   else 
-    p.no-results 
-      | Your search for 
-      span.query= search_query 
-      |  returned no results.
+    +noResults(search_query)
   

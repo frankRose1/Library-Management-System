@@ -2,20 +2,28 @@ extends layout
 
 include mixins/_patron
 include mixins/_pagination
+include mixins/_searchForm
+include mixins/_noResults
 
 block content
+  +searchForm('patrons')
   h1 Patrons
   p
     a.button(href="/patrons/new") Create New Patron
-  table
-    thead
-      tr
-        th Name
-        th Address
-        th Email
-        th Library ID
-        th Zip
-    tbody
-      each patron in patrons
-        +patron(patron)
-  +pagination('patrons', false, undefined, page, pages, count)
+
+  if patrons.length > 0
+    table
+      thead
+        tr
+          th Name
+          th Address
+          th Email
+          th Library ID
+          th Zip
+      tbody
+        each patron in patrons
+          +patron(patron)
+    if page && pages && count
+      +pagination('patrons', false, undefined, page, pages, count)
+  else
+    +noResults(search_query)  

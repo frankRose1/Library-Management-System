@@ -1,6 +1,7 @@
 const Patrons = require('../models').Patrons;
 const Loans = require('../models').Loans;
 const Books = require('../models').Books;
+const { Op } = require('sequelize');
 
 const patronHandlers = {};
 
@@ -125,6 +126,31 @@ patronHandlers.createNewPatron = (req, res) => {
         }).catch(err => {
             res.sendStatus(500);
         });
+};
+
+//Allow users to search by a patrons library_id or email. search is case insensitive
+patronHandlers.searchPatrons = (req, res) => {
+    const {search_query} = req.body;
+    Patrons.findAll({
+        where: {
+            [Op.or] : [
+                {
+                    library_id: {
+                        [Op.like]: `%${search_query}%`
+                    }
+                },
+                {
+                    email: {
+                        [Op.like]: `%${search_query}%`
+                    }
+                }
+            ]
+        }
+    }).then(patrons => {
+        res.render('allPatrons', {title: 'Patrons', patrons, search_query});
+    }).catch(err => {
+        res.sendStatus(500);
+    });
 };
 
 module.exports = patronHandlers;

@@ -28,6 +28,7 @@ router.get('/patrons/new', patronHandlers.newPatronForm);
 router.post('/patrons/new', patronHandlers.createNewPatron);
 router.get('/patron/details/:id', patronHandlers.patronDetails);
 router.post('/patron/details/:id', patronHandlers.updatePatron);
+router.post('/patrons/search', patronHandlers.searchPatrons); // search feature
 
 
 //loan routes

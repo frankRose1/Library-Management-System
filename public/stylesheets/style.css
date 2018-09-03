@@ -96,6 +96,7 @@ input[type=text], select {
 p.no-history,
 p.no-results {
   font-size: 23px;
+  margin-top: 15px;
 }
 
 span.query {

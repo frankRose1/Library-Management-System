@@ -2,6 +2,7 @@ extends layout
 
 include mixins/_loan
 include mixins/_errorMessages
+include mixins/_noLoanHistory
 
 block content
   h1 Patron: #{title}
@@ -29,8 +30,8 @@ block content
     p
       input(type="submit" value="Update")
 
+  h2 Loan History
   if patron.Loans.length > 0
-    h2 Loan History
     table
       thead
         tr
@@ -43,3 +44,5 @@ block content
       tbody
         each loan in patron.Loans
           +loan(loan, patron)
+  else
+    +noLoanHistory('patron')

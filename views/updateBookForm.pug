@@ -2,6 +2,7 @@ extends layout
 
 include mixins/_errorMessages
 include mixins/_loan
+include mixins/_noLoanHistory
 
 block content
   h1 Book: #{book.title}
@@ -23,8 +24,8 @@ block content
     p
       input(type="submit" value="Update")
 
+    h2 Loan History
     if book.Loans.length > 0
-      h2 Loan History
       table
         thead
           tr
@@ -37,3 +38,5 @@ block content
         tbody
           each loan in book.Loans
             +loan(loan, undefined, book)
+    else
+      +noLoanHistory('book')

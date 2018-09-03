@@ -93,6 +93,10 @@ input[type=text], select {
   margin-left: 10px;
 }
 
+p.no-history {
+  font-size: 23px;
+}
+
 /* error messages */
 h2.error,
 ul.error li {

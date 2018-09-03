@@ -71,7 +71,7 @@ loanHandlers.filterLoans = (req, res) => {
                 }
             }
         }).then(loans => {
-            res.render('loansListing', {title: 'Overdue Books', loans});
+            res.render('loansListing', {title: 'Overdue Loans', loans});
         }).catch(err => {
             res.sendStatus(500);
         });

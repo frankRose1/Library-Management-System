@@ -1,10 +1,17 @@
-mixin pagination(category, page, pages, count)
+mixin pagination(category, filtered, query, page, pages, count)
+  -const filteredPrev = `/${category}/filter/${query}/page/${page - 1}`;
+  -const filteredNext = `/${category}/filter/${query}/page/${parseFloat(page) + 1}`;
+  -const prev = `/${category}/all/page/${page - 1}`;
+  -const next = `/${category}/all/page/${parseFloat(page) + 1}`;
+  -const prevLink = filtered ? filteredPrev : prev;
+  -const nextLink = filtered ? filteredNext : next;
+
   .pagination
     .pagination_prev
       if page > 1
-        a(href=`/${category}/all/page/${page - 1}`) Prev
+        a(href=`${prevLink}`) Prev
     .pagination_text
       p Page #{page} of #{pages} - #{count} total results
     .pagination_next
       if page < pages
-        a(href=`/${category}/all/page/${parseFloat(page) + 1}`) Next
+        a(href=`${nextLink}`) Next

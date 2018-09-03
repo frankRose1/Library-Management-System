@@ -3,13 +3,15 @@ const Loans = require('../models').Loans;
 const Patrons = require('../models').Patrons;
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
+//for pagination
+const limit = 5; //show this amount of books per page
+
 
 const bookHandlers = {};
 
 bookHandlers.allBooks = (req, res) => {
-    const page = req.params.page || 1; //current page
-    const limit = 5; //show this amount of books per page
-    const offset = (page * limit) - limit; //skip value
+    const page = req.params.page || 1;
+    const offset = (page * limit) - limit;
 
     //skip by the amount of the offset value and fetch the value of limit after that 
     Books.findAndCountAll({
@@ -43,10 +45,14 @@ bookHandlers.newBookForm = (req, res) => {
 
 bookHandlers.filterBooks = (req, res) => {
     const {query} = req.params;
+    const page = req.params.page || 1;
+    const offset = (page * limit) - limit;
     //only books that are checked out && overdue
     if (query == 'overdue') {
         //SELECT * FROM books WHERE LOANS return_by < Date.now() && returned_on IS NULL
-        Books.findAll({
+        Books.findAndCountAll({
+            offset: offset,
+            limit: limit,
             include : [
                 {
                     model: Loans,
@@ -60,7 +66,16 @@ bookHandlers.filterBooks = (req, res) => {
                     }
                 }]
         }).then(books => {
-            res.render('allBooks', {title: 'Overdue Books', books});
+            const count = books.count;
+            const pages = Math.ceil(count / limit);
+            res.render('filteredBooks', {
+                                        title: 'Overdue Books', 
+                                        books: books.rows,
+                                        page,
+                                        pages,
+                                        count,
+                                        query
+                                });
         }).catch(err => {
             res.sendStatus(500);
         });
@@ -68,7 +83,9 @@ bookHandlers.filterBooks = (req, res) => {
     //all books that are currently checked out
     if (query == 'checked') {
         // SELECT * FROM books WHERE LOANS returned_on IS NULL && loaned_on < Date.now()
-        Books.findAll({
+        Books.findAndCountAll({
+            offset: offset,
+            limit: limit,
             include: [
                 {
                     model: Loans,
@@ -82,7 +99,16 @@ bookHandlers.filterBooks = (req, res) => {
                     }
                 }]
         }).then(books => {
-            res.render('allBooks', {title: 'Checked Out Books', books});
+            const count = books.count;
+            const pages = Math.ceil(count / limit);
+            res.render('filteredBooks', {
+                                    title: 'Checked Out Books', 
+                                    books: books.rows,
+                                    page,
+                                    pages,
+                                    count,
+                                    query
+                                });
         }).catch(err => {
             res.sendStatus(500);
         });

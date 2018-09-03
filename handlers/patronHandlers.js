@@ -68,6 +68,8 @@ patronHandlers.updatePatron = (req, res) => {
                 //patron not found
                 res.sendStatus(404);
             }
+        }).then(patron => {
+            res.redirect('/patrons/all');
         }).catch(err => {
             if (err.name == 'SequelizeValidationError') {
                 Patrons.findOne({

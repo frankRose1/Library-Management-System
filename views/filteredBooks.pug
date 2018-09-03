@@ -23,5 +23,4 @@ block content
     tbody
       each book in books
         +book(book)
-  +pagination('books', false, undefined, page, pages, count)
-  
+  +pagination('books', true, query, page, pages, count)

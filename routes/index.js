@@ -3,6 +3,7 @@ const router = express.Router();
 const patronHandlers = require('../handlers/patronHandlers');
 const bookHandlers = require('../handlers/bookHandlers');
 const loanHandlers = require('../handlers/loanHandlers');
+const {checkQueryParam} = require('../helpers/helpers');
 
 //home page
 router.get('/', (req, res) => {
@@ -12,7 +13,8 @@ router.get('/', (req, res) => {
 //book routes
 router.get('/books/all', bookHandlers.allBooks);
 router.get('/books/all/page/:page', bookHandlers.allBooks); //for pagination
-router.get('/books/filter/:query', bookHandlers.filterBooks);
+router.get('/books/filter/:query', checkQueryParam, bookHandlers.filterBooks);
+router.get('/books/filter/:query/page/:page', checkQueryParam, bookHandlers.filterBooks); //for pagination
 router.get('/books/new', bookHandlers.newBookForm);
 router.post('/books/new', bookHandlers.addNewBook);
 router.get('/book/details/:id', bookHandlers.getBookDetails);
@@ -29,7 +31,7 @@ router.post('/patron/details/:id', patronHandlers.updatePatron);
 
 //loan routes
 router.get('/loans/all', loanHandlers.allLoans);
-router.get('/loans/filter/:query', loanHandlers.filterLoans);
+router.get('/loans/filter/:query', checkQueryParam, loanHandlers.filterLoans);
 router.get('/loans/new', loanHandlers.newLoanForm);
 router.post('/loans/new', loanHandlers.addNewLoan);
 router.get('/loan/return/:id', loanHandlers.returnBookForm);

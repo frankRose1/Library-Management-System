@@ -6,8 +6,9 @@ include mixins/_searchForm
 include mixins/_noResults
 
 block content
-  +searchForm('patrons')
-  h1 Patrons
+  .page-header
+    h1 Patrons
+    +searchForm('patrons')
   p
     a.button(href="/patrons/new") Create New Patron
 

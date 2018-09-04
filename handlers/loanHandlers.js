@@ -28,7 +28,7 @@ loanHandlers.allLoans = (req, res) =>{
 loanHandlers.filterLoans = (req, res) => {
     const {query} = req.params;
     if (query == 'checked') {
-        //SELECT * FROM loan WHERE loaned_on < Date.now() AND returned_on IS NULL
+        //SELECT * FROM loan WHERE loaned_on <= Date.now() AND returned_on IS NULL
         Loans.findAll({
             include:[
                 {
@@ -39,7 +39,7 @@ loanHandlers.filterLoans = (req, res) => {
                 }],
             where: {
                 loaned_on: { 
-                    [Op.lt]: Date.now()
+                    [Op.lte]: Date.now()
                 },
                 returned_on: {
                     [Op.eq]: null

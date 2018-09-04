@@ -1,6 +1,6 @@
 mixin searchForm(category)
   -const placeholderTxt = category == 'books' ? 'Title or Author' : 'Library ID or email';
   form.search(action=`/${category}/search` method="post")
-    label(for="search_query") Search For #{category == 'books' ? 'Books' : 'Patrons'}
+    label(for="search_query") Search For #{category == 'books' ? 'Books' : 'Patrons'}:
     input#search_query(type="text" name="search_query" placeholder=`${placeholderTxt}`)
     input(type="submit" value="Search")

@@ -103,6 +103,25 @@ span.query {
   font-weight: bold;
 }
 
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Search form */
+form.search{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 450px;
+}
+
+form.search input[type=submit] {
+  margin-left : 0;
+}
+
 /* error messages */
 h2.error,
 ul.error li {

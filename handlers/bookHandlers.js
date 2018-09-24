@@ -9,7 +9,7 @@ const limit = 5; //show this amount of books per page
 
 const bookHandlers = {};
 
-bookHandlers.allBooks = (req, res) => {
+bookHandlers.allBooks = (req, res, next) => {
     const page = req.params.page || 1;
     const offset = (page * limit) - limit;
 
@@ -35,7 +35,7 @@ bookHandlers.allBooks = (req, res) => {
                                 count
                             });
     }).catch(err => {
-        res.sendStatus(500);
+        next(err);
     });
 }
 
@@ -43,7 +43,7 @@ bookHandlers.newBookForm = (req, res) => {
     res.render('newBookForm', { title: 'New Book', book: {} });
 };
 
-bookHandlers.filterBooks = (req, res) => {
+bookHandlers.filterBooks = (req, res, next) => {
     const {query} = req.params;
     const page = req.params.page || 1;
     const offset = (page * limit) - limit;
@@ -77,7 +77,7 @@ bookHandlers.filterBooks = (req, res) => {
                                         query
                                 });
         }).catch(err => {
-            res.sendStatus(500);
+            return next(err);
         });
     }
     //all books that are currently checked out
@@ -110,12 +110,12 @@ bookHandlers.filterBooks = (req, res) => {
                                     query
                                 });
         }).catch(err => {
-            res.sendStatus(500);
+            next(err);
         });
     }
 };
 
-bookHandlers.addNewBook = (req, res) => {
+bookHandlers.addNewBook = (req, res, next) => {
     Books.create(req.body)
             .then(book => {
                 //if it saves successfull, redirect to all books
@@ -132,12 +132,12 @@ bookHandlers.addNewBook = (req, res) => {
                     throw err;
                 }
             }).catch(err => {
-                res.sendStatus(500);
+                next(err);
             });
 };
 
 
-bookHandlers.getBookDetails = (req, res) => {
+bookHandlers.getBookDetails = (req, res, next) => {
     const bookId = req.params.id;
     Books.findOne({
         where: {
@@ -156,15 +156,17 @@ bookHandlers.getBookDetails = (req, res) => {
         if (book) {
             res.render('updateBookForm', {title: 'Book Details', book});
         } else {
-            res.sendStatus(404);
+            const error = new Error('Book not found');
+            error.status = 404;
+            return next(error);
         }
     }).catch(err => {
-        res.sendStatus(500);
+        next(err);
     });;
 };
 
 
-bookHandlers.updateBook = (req, res) => {
+bookHandlers.updateBook = (req, res, next) => {
     const bookId = req.params.id;
     Books.findById(bookId)
         .then(book => book.update(req.body))
@@ -193,22 +195,24 @@ bookHandlers.updateBook = (req, res) => {
                             book
                         });
                     } else {
-                        res.sendStatus(404);
+                        const error = new Error('Book not found');
+                        error.status = 404;
+                        return next(error);
                     }
                 }).catch(err => {
-                    res.sendStatus(500);
+                    return next(err);
                 });
             } else {
                 throw err;
             }
         })
         .catch(err => {
-            res.sendStatus(500);
+            next(err);
         });
 };
 
 //Users can search a book by title or author. search is case insensitive
-bookHandlers.searchBooks = (req, res) => {
+bookHandlers.searchBooks = (req, res, next) => {
     const {search_query} = req.body;
     Books.findAll({
         where: {
@@ -228,7 +232,7 @@ bookHandlers.searchBooks = (req, res) => {
     }).then(books => {
         res.render('allBooks', {title: 'Books', books, search_query});
     }).catch(err => {
-        res.sendStatus(500);
+        next(err);
     });
 };
 

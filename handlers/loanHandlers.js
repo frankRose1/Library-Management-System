@@ -7,7 +7,7 @@ const Op = Sequelize.Op;
 
 const loanHandlers = {};
 
-loanHandlers.allLoans = (req, res) =>{
+loanHandlers.allLoans = (req, res, next) =>{
     Loans.findAll({
         include: [
             {
@@ -21,11 +21,11 @@ loanHandlers.allLoans = (req, res) =>{
         res.render('loansListing', {title: 'Loans', loans});
     })
     .catch(err => {
-        res.sendStatus(500);
+        next(err);
     });
 };
 
-loanHandlers.filterLoans = (req, res) => {
+loanHandlers.filterLoans = (req, res, next) => {
     const {query} = req.params;
     if (query == 'checked') {
         //SELECT * FROM loan WHERE loaned_on <= Date.now() AND returned_on IS NULL
@@ -48,7 +48,7 @@ loanHandlers.filterLoans = (req, res) => {
         }).then(loans => {
             res.render('loansListing', {title: 'Checked Out Books', loans});
         }).catch(err => {
-            res.sendStatus(500);
+            return next(err);
         });
     } 
 
@@ -73,12 +73,12 @@ loanHandlers.filterLoans = (req, res) => {
         }).then(loans => {
             res.render('loansListing', {title: 'Overdue Loans', loans});
         }).catch(err => {
-            res.sendStatus(500);
+            next(err);
         });
     }
 };
 
-loanHandlers.newLoanForm = (req, res) => {
+loanHandlers.newLoanForm = (req, res, next) => {
     //configure the auto populated fields here loaned_on and return_by
     const loaned_on = moment().format('YYYY-MM-DD');
     const return_by = moment().add(1, 'week').format('YYYY-MM-DD');
@@ -95,15 +95,15 @@ loanHandlers.newLoanForm = (req, res) => {
                     });
                 })
                 .catch(err => {
-                    res.sendStatus(500);
+                    return next(err);
                 });
         })
         .catch(err => {
-            res.sendStatus(500);
+            next(err);
         });
 };
 
-loanHandlers.addNewLoan = (req, res) => {
+loanHandlers.addNewLoan = (req, res, next) => {
     const {loaned_on, return_by} = req.body;
 
     Loans.create(req.body)
@@ -127,10 +127,10 @@ loanHandlers.addNewLoan = (req, res) => {
                                     return_by
                                 });
                             }).catch(err => {
-                                res.sendStatus(500);
+                                return next(err);
                             });
                     }).catch(err => {
-                        res.sendStatus(500);
+                        return next(err);
                     });
             } else {
                 throw err;
@@ -138,11 +138,11 @@ loanHandlers.addNewLoan = (req, res) => {
         })
         .catch(err => {
             //server error creating new loan
-            res.sendStatus(500);
+            next(err);
         });
 };
 
-loanHandlers.returnBookForm = (req, res) => {
+loanHandlers.returnBookForm = (req, res, next) => {
     const todaysDate = moment().format('YYYY-MM-DD');
     const {id} = req.params;
     Loans.findOne({
@@ -160,14 +160,16 @@ loanHandlers.returnBookForm = (req, res) => {
         if (loan) {
             res.render('returnBookForm', {title: 'Return Book', loan, todaysDate});
         } else {
-            res.sendStatus(404);
+            const error = new Error('Loan not found.');
+            error.status = 404;
+            return next(error);
         }
     }).catch(err => {
-        res.sendStatus(500);
+        next(err);
     });
 };
 
-loanHandlers.updateLoanStatus = (req, res) => {
+loanHandlers.updateLoanStatus = (req, res, next) => {
     const {id} = req.params;
     const {returned_on} = req.body;
     Loans.findById(id)
@@ -197,13 +199,15 @@ loanHandlers.updateLoanStatus = (req, res) => {
                         loan
                     });
                 }).catch(err => {
-                    res.sendStatus(404); //loan not found
+                    const error = new Error('Loan not found.');
+                    error.status = 404;
+                    return next(error);
                 });
             } else {
                 throw err;
             }
         }).catch(err => {
-            res.sendStatus(500);
+            next(err);
         });
 };
 

@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 
 const patronHandlers = {};
 
-patronHandlers.allPatrons = (req, res) => {
+patronHandlers.allPatrons = (req, res, next) => {
     const page = req.params.page || 1;
     const limit = 5;
     const offset = (page * limit) - limit;
@@ -31,12 +31,12 @@ patronHandlers.allPatrons = (req, res) => {
                                     count
                                 });
     }).catch(err => {
-        res.sendStatus(500);
+        next(err);
     });
 };
 
-//include the loan history of each patron
-patronHandlers.patronDetails = (req, res) => {
+
+patronHandlers.patronDetails = (req, res, next) => {
     const {id} = req.params;
     Patrons.findOne({
         where : {
@@ -51,23 +51,26 @@ patronHandlers.patronDetails = (req, res) => {
             const title = `${patron.first_name} ${patron.last_name}`;
             res.render('patronDetails', {title , patron});
         } else {
-            res.sendStatus(404);
+            const error = new Error('Patron not found');
+            error.status = 404;
+            return next(error);
         }
     }).catch(err => {
-        res.sendStatus(500);
+        next(err);
     });
 };
 
 
-patronHandlers.updatePatron = (req, res) => {
+patronHandlers.updatePatron = (req, res, next) => {
     const {id} = req.params;
     Patrons.findById(id)
         .then(patron => {
             if (patron) {
                 return patron.update(req.body);
             } else {
-                //patron not found
-                res.sendStatus(404);
+                const error = new Error('Patron not found');
+                error.status = 404;
+                return next(error);
             }
         }).then(patron => {
             res.redirect('/patrons/all');
@@ -89,16 +92,18 @@ patronHandlers.updatePatron = (req, res) => {
                             errors: err.errors
                         });
                     } else {
-                        res.sendStatus(404);
+                        const error = new Error('Patron not found');
+                        error.status = 404;
+                        return next(error);
                     }
                 }).catch(err => {
-                    res.sendStatus(500);
+                    return next(err);
                 });
             } else {
                 throw err;
             }
         }).catch(err => {
-            res.sendStatus(500);
+            next(err);
         });
 };
 
@@ -107,7 +112,7 @@ patronHandlers.newPatronForm = (req, res) => {
 };
 
 
-patronHandlers.createNewPatron = (req, res) => {
+patronHandlers.createNewPatron = (req, res, next) => {
     Patrons.create(req.body)
         .then(patron => {
             //on a successful create, redirect to patrons/all
@@ -124,12 +129,12 @@ patronHandlers.createNewPatron = (req, res) => {
                 throw err;
             }
         }).catch(err => {
-            res.sendStatus(500);
+            next(err);
         });
 };
 
 //Allow users to search by a patrons library_id or email. search is case insensitive
-patronHandlers.searchPatrons = (req, res) => {
+patronHandlers.searchPatrons = (req, res, next) => {
     const {search_query} = req.body;
     Patrons.findAll({
         where: {
@@ -149,7 +154,7 @@ patronHandlers.searchPatrons = (req, res) => {
     }).then(patrons => {
         res.render('allPatrons', {title: 'Patrons', patrons, search_query});
     }).catch(err => {
-        res.sendStatus(500);
+        next(err);
     });
 };
 

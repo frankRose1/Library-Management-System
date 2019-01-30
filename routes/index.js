@@ -3,7 +3,7 @@ const router = express.Router();
 const patronHandlers = require('../handlers/patronHandlers');
 const bookHandlers = require('../handlers/bookHandlers');
 const loanHandlers = require('../handlers/loanHandlers');
-const {checkQueryParam} = require('../helpers/helpers');
+const checkQueryParam = require('../middleware/checkQueryParam');
 
 //home page
 router.get('/', (req, res) => {

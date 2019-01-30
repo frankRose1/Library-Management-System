@@ -3,104 +3,84 @@ const Loans = require('../models').Loans;
 const Books = require('../models').Books;
 const Patrons = require('../models').Patrons;
 const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
+const { Op } = Sequelize;
+const createError = require('../utils/createError')
 
 const loanHandlers = {};
 
-loanHandlers.allLoans = (req, res, next) =>{
-    Loans.findAll({
+loanHandlers.allLoans = async (req, res) => {
+    const loans = await Loans.findAll({
+    include: [
+      {
+          model: Patrons
+      },
+      {
+          model: Books
+      }]
+    });
+  res.render('loansListing', {title: 'Loans', loans});
+};
+
+loanHandlers.filterLoans = async (req, res) => {
+    const { query } = req.params;
+    let loans;
+    if (query == 'checked') {
+        //SELECT * FROM loan WHERE loaned_on <= Date.now() AND returned_on IS NULL
+        loans = await Loans.findAll({
+          include:[
+              {
+                  model: Patrons
+              },
+              {
+                  model: Books
+              }],
+          where: {
+              loaned_on: { 
+                  [Op.lte]: Date.now()
+              },
+              returned_on: {
+                  [Op.eq]: null
+              }
+          }
+      });
+      res.render('loansListing', {title: 'Checked Out Books', loans});
+    } 
+
+    if (query == 'overdue') {
+      //SELECT * FROM loan WHERE return_by < DATE.now() AND returned_on IS NULL
+      loans = await Loans.findAll({
         include: [
             {
                 model: Patrons
             },
             {
                 model: Books
-            }]
-    })
-    .then(loans => {
-        res.render('loansListing', {title: 'Loans', loans});
-    })
-    .catch(err => {
-        next(err);
-    });
-};
-
-loanHandlers.filterLoans = (req, res, next) => {
-    const {query} = req.params;
-    if (query == 'checked') {
-        //SELECT * FROM loan WHERE loaned_on <= Date.now() AND returned_on IS NULL
-        Loans.findAll({
-            include:[
-                {
-                    model: Patrons
-                },
-                {
-                    model: Books
-                }],
-            where: {
-                loaned_on: { 
-                    [Op.lte]: Date.now()
-                },
-                returned_on: {
-                    [Op.eq]: null
-                }
+            }],
+        where: {
+            return_by: {
+                [Op.lt]: Date.now()
+            },
+            returned_on: {
+                [Op.eq]: null
             }
-        }).then(loans => {
-            res.render('loansListing', {title: 'Checked Out Books', loans});
-        }).catch(err => {
-            return next(err);
-        });
-    } 
-
-    if (query == 'overdue') {
-        //SELECT * FROM loan WHERE return_by < DATE.now() AND returned_on IS NULL
-        Loans.findAll({
-            include: [
-                {
-                    model: Patrons
-                },
-                {
-                    model: Books
-                }],
-            where: {
-                return_by: {
-                    [Op.lt]: Date.now()
-                },
-                returned_on: {
-                    [Op.eq]: null
-                }
-            }
-        }).then(loans => {
-            res.render('loansListing', {title: 'Overdue Loans', loans});
-        }).catch(err => {
-            next(err);
-        });
+        }
+      });
+      res.render('loansListing', {title: 'Overdue Loans', loans});
     }
 };
 
-loanHandlers.newLoanForm = (req, res, next) => {
-    //configure the auto populated fields here loaned_on and return_by
+loanHandlers.newLoanForm = async (req, res) => {
+    //these are the auto populated fields for the loan form
     const loaned_on = moment().format('YYYY-MM-DD');
     const return_by = moment().add(1, 'week').format('YYYY-MM-DD');
-    Books.findAll()
-        .then(books => {
-            Patrons.findAll()
-                .then(patrons => {
-                    res.render('newLoanForm', {
-                                    title: 'New Loan',
-                                    books,
-                                    patrons,
-                                    loaned_on, 
-                                    return_by
-                    });
-                })
-                .catch(err => {
-                    return next(err);
-                });
-        })
-        .catch(err => {
-            next(err);
-        });
+    const [books, patrons] = await Promise.all([Books.findAll(), Patrons.findAll()]);
+    res.render('newLoanForm', {
+      title: 'New Loan',
+      books,
+      patrons,
+      loaned_on, 
+      return_by
+  });
 };
 
 loanHandlers.addNewLoan = (req, res, next) => {
@@ -142,31 +122,27 @@ loanHandlers.addNewLoan = (req, res, next) => {
         });
 };
 
-loanHandlers.returnBookForm = (req, res, next) => {
+loanHandlers.returnBookForm = async (req, res) => {
     const todaysDate = moment().format('YYYY-MM-DD');
     const {id} = req.params;
-    Loans.findOne({
-        where: {
-            id: id
-        },
-        include: [
-            {
-                model: Patrons
-            },
-            {
-                model: Books
-            }]
-    }).then(loan => {
-        if (loan) {
-            res.render('returnBookForm', {title: 'Return Book', loan, todaysDate});
-        } else {
-            const error = new Error('Loan not found.');
-            error.status = 404;
-            return next(error);
-        }
-    }).catch(err => {
-        next(err);
+    const loan = await Loans.findOne({
+      where: {
+          id: id
+      },
+      include: [
+          {
+              model: Patrons
+          },
+          {
+              model: Books
+          }]
     });
+
+    if (!loan){
+      createError('Loan not found.', 404)
+    }
+
+    res.render('returnBookForm', {title: 'Return Book', loan, todaysDate});
 };
 
 loanHandlers.updateLoanStatus = (req, res, next) => {

@@ -2,8 +2,7 @@ const express = require('express');
 require('express-async-errors')
 const bodyParser = require('body-parser');
 const path = require('path');
-const router = require('./routes/index');
-const {notFound, renderError} = require('./handlers/errorHandlers');
+const {notFound, renderError} = require('./middleware/errors');
 
 const app = express();
 
@@ -15,7 +14,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/', router);
+require('./routes/index')(app)
 
 app.use(notFound);
 

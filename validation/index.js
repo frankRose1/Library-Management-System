@@ -21,8 +21,8 @@ function validatePatron(patronData){
 function validateBook(bookData){
   const schema = Joi.object().keys({
     title: Joi.string().required(),
-    author: Joi().string().alphanum(),
-    genre: Joi().string().required(),
+    author: Joi.string().required(),
+    genre: Joi.string().required(),
     first_published: Joi.number().integer()
   });
 
@@ -31,12 +31,24 @@ function validateBook(bookData){
 
 function validateLoan(loanData){
   const schema = Joi.object().keys({
-
+    book_id: Joi.number().integer().required(),
+    patron_id: Joi.number().integer().required(),
+    loaned_on: Joi.string().required(),
+    return_by: Joi.string().required()
   });
 
   return Joi.validate(loanData, schema, validateOptions);
 }
 
+function validateLoanReturn(returnData){
+  const schema = Joi.object().keys({
+    returned_on: Joi.string().required()
+  })
+
+  return Joi.validate(returnData, schema, validateOptions)
+}
+
 exports.validatePatron = validatePatron
 exports.validateBook = validateBook
 exports.validateLoan = validateLoan
+exports.validateLoanReturn = validateLoanReturn

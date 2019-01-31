@@ -6,6 +6,7 @@ const Books = require('../models').Books;
 const Patrons = require('../models').Patrons;
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
+const { validateLoan, validateLoanReturn } = require('../validation')
 const createError = require('../utils/createError')
 const checkQueryParam = require('../middleware/checkQueryParam')
 
@@ -88,43 +89,27 @@ router.get('/new', async (req, res) => {
   });
 });
 
-router.post('/new', (req, res, next) => {
-  const {loaned_on, return_by} = req.body;
+router.post('/new', async (req, res) => {
 
-  Loans.create(req.body)
-      .then(loan => {
-          //if it saves succefully, redirect to all loans
-          res.redirect('/loans/all');
-      })
-      .catch(err => {
-          if (err.name == 'SequelizeValidationError') {
-              //re render the form with the errors
-              Books.findAll()
-                  .then(books => {
-                      Patrons.findAll()
-                          .then(patrons => {
-                              res.render('newLoanForm', {
-                                  title: 'New Loan',
-                                  errors: err.errors,
-                                  books,
-                                  patrons,
-                                  loaned_on,
-                                  return_by
-                              });
-                          }).catch(err => {
-                              return next(err);
-                          });
-                  }).catch(err => {
-                      return next(err);
-                  });
-          } else {
-              throw err;
-          }
-      })
-      .catch(err => {
-          //server error creating new loan
-          next(err);
-      });
+  const {error, value} = validateLoan(req.body)
+
+  if (error){
+    const [books, patrons] = await Promise.all([Books.findAll(), Patrons.findAll()])
+    return res
+      .status(400)
+      .render('newLoanForm', {
+        title: 'New Loan',
+        errors: error.details,
+        loaned_on: req.body.loaned_on,
+        return_by: req.body.return_by,
+        books,
+        patrons,
+    })
+  }
+
+  await Loans.create(value);
+
+  res.status(201).redirect('/loans/all');
 });
 
 router.get('/returns/:id', async (req, res) => {
@@ -150,46 +135,41 @@ router.get('/returns/:id', async (req, res) => {
   res.render('returnBookForm', {title: 'Return Book', loan, todaysDate});
 });
 
-router.post('/returns/:id', (req, res, next) => {
-  const {id} = req.params;
-  const {returned_on} = req.body;
-  Loans.findById(id)
-      .then(loan => loan.update({returned_on}))
-      .then(loan => {
-          //on a succesfull update, redirect to the loans page
-          res.redirect('/loans/all');
-      }).catch(err => {
-          if (err.name == 'SequelizeValidationError') {
-              //get the loan and associated patron/book
-              Loans.findOne({
-                  where: {
-                      id: id
-                  },
-                  include: [
-                      {
-                          model: Patrons
-                      },
-                      {
-                          model: Books
-                  }]
-              }).then(loan => {
-                  res.render('returnBookForm', {
-                      title: 'Return Books',
-                      todaysDate: returned_on,
-                      errors: err.errors,
-                      loan
-                  });
-              }).catch(err => {
-                  const error = new Error('Loan not found.');
-                  error.status = 404;
-                  return next(error);
-              });
-          } else {
-              throw err;
-          }
-      }).catch(err => {
-          next(err);
-      });
+router.post('/returns/:id', async (req, res) => {
+
+  const loan = await Loans.findOne({
+    where: {
+      id: req.params.id
+    },
+    include: [
+      {
+        model: Patrons
+      },
+      {
+        model: Books
+      }
+    ]
+  });
+
+  if (!loan){
+    createError('Loan not found.', 404)
+  }
+
+  const { error, value } = validateLoanReturn(req.body);
+
+  if(error){
+    return res
+      .status(400)
+      .render('returnBookForm', {
+        title: 'Return Books',
+        todaysDate: req.body.returned_on,
+        errors: error.details,
+        loan
+    });
+  }
+  console.log(value)
+  await loan.update(value)
+  res.status(204).redirect('/loans/all');
 });
 
 module.exports = router

@@ -6,6 +6,7 @@ const Patrons = require('../models').Patrons;
 const Sequelize = require('sequelize');
 const checkQueryParam = require('../middleware/checkQueryParam')
 const { Op } = Sequelize;
+const { validateBook } = require('../validation')
 const createError = require('../utils/createError');
 const limit = 5; //show this amount of books per page
 
@@ -116,25 +117,19 @@ router.get('/new', (req, res) => {
   res.render('newBookForm', { title: 'New Book', book: {} });
 });
 
-router.post('/new', (req, res, next) => {
-  Books.create(req.body)
-    .then(book => {
-        //if it saves successfull, redirect to all books
-        res.redirect('/books/all');
-    }).catch(err => {
-        if (err.name == 'SequelizeValidationError') {
-            //re-render the form with info about the errors, and auto fill the inputs with values from "book"
-            res.render('newBookForm', {
-                title: 'New Book',
-                errors: err.errors,
-                book: Books.build(req.body)
-            });
-        } else {
-            throw err;
-        }
-    }).catch(err => {
-        next(err);
+router.post('/new', async (req, res ) => {
+  const { error, value } = validateBook(req.body);
+
+  if (error) {
+    return res.render('newBookForm', {
+      title: 'New Book',
+      errors: error.details,
+      book: Books.build(req.body)
     });
+  }
+
+  await Books.create(value);
+  res.status(201).redirect('/books/all');
 });
 
 router.get('/details/:id', async (req, res) => {
@@ -159,49 +154,38 @@ router.get('/details/:id', async (req, res) => {
   res.render('updateBookForm', {title: 'Book Details', book});
 });
 
-router.post('/details/:id', (req, res, next) => {
-  const bookId = req.params.id;
-  Books.findById(bookId)
-      .then(book => book.update(req.body))
-      .then(book => {
-          //if the book updates and saves without error redirect to all books page
-          res.redirect('/books/all');
-      })
-      .catch(err => {
-          if (err.name == 'SequelizeValidationError') {
-              Books.findOne({
-                  where: {
-                      id: bookId
-                  },
-                  include: [{
-                          model: Loans,
-                          include: [{
-                              model: Patrons,
-                              attributes: ['first_name', 'last_name', 'id']
-                          }]
-                      }]
-              }).then(book => {
-                  if (book) {
-                      res.render('updateBookForm', {
-                          title: 'Book Details',
-                          errors: err.errors,
-                          book
-                      });
-                  } else {
-                      const error = new Error('Book not found');
-                      error.status = 404;
-                      return next(error);
-                  }
-              }).catch(err => {
-                  return next(err);
-              });
-          } else {
-              throw err;
-          }
-      })
-      .catch(err => {
-          next(err);
-      });
+router.post('/details/:id', async (req, res) => {
+
+  const book = await Books.findOne({
+    where: {
+      id: req.params.id
+    },
+    include: [{
+      model: Loans,
+      include: [{
+        model: Patrons,
+        attributes: ['first_name', 'last_name', 'id']
+      }]
+    }]
+  });
+
+  if (!book) {
+    createError('Book not found', 404)
+  }
+
+  const { error, value } = validateBook(req.body);
+  if (error){
+    return res
+      .status(400)
+      .render('updateBookForm', {
+        title: 'Book Details',
+        errors: error.details,
+        book
+    });
+  }
+
+  await book.update(value)
+  res.status(204).redirect('/books/all')
 });
 
 //Users can search a book by title or author. search is case insensitive

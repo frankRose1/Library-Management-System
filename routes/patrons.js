@@ -5,6 +5,7 @@ const Loans = require('../models').Loans;
 const Books = require('../models').Books;
 const { Op } = require('sequelize');
 const createError = require('../utils/createError');
+const { validatePatron } = require('../validation')
 
 /**
  * All routes are prefixed with "/patrons"
@@ -44,27 +45,21 @@ router.get('/new', (req, res) => {
   res.render('newPatronForm', { title: 'New Patron', patron: {} });
 });
 
-router.post('/new', (req, res, next) => {
-  Patrons.create(req.body)
-    .then(patron => {
-      //on a successful create, redirect to patrons/all
-      res.redirect('/patrons/all');
-    })
-    .catch(err => {
-      if (err.name == 'SequelizeValidationError') {
-        //re render the form with validation errors
-        res.render('newPatronForm', {
-          title: 'New Patron',
-          patron: Patrons.build(req.body),
-          errors: err.errors
-        });
-      } else {
-        throw err;
-      }
-    })
-    .catch(err => {
-      next(err);
+router.post('/new', async (req, res ) => {
+  const { error, value } = validatePatron(req.body);
+
+  if (error) {
+    return res
+      .status(400)
+      .render('newPatronForm', {
+      title: 'New Patron',
+      patron: Patrons.build(req.body),
+      errors: error.details
     });
+  }
+
+  await Patrons.create(req.body);
+  res.status(201).redirect('/patrons/all');
 });
 
 router.get('/details/:id', async (req, res) => {
@@ -89,57 +84,39 @@ router.get('/details/:id', async (req, res) => {
   res.render('patronDetails', { title, patron });
 });
 
-router.post('/details/:id', (req, res, next) => {
+router.post('/details/:id', async (req, res) => {
   const { id } = req.params;
-  Patrons.findById(id)
-    .then(patron => {
-      if (patron) {
-        return patron.update(req.body);
-      } else {
-        const error = new Error('Patron not found');
-        error.status = 404;
-        return next(error);
+
+  const patron = await Patrons.findOne({
+    where: {
+      id: id
+    },
+    include: [
+      {
+        model: Loans,
+        include: [ Books ]
       }
-    })
-    .then(patron => {
-      res.redirect('/patrons/all');
-    })
-    .catch(err => {
-      if (err.name == 'SequelizeValidationError') {
-        Patrons.findOne({
-          where: {
-            id: id
-          },
-          include: [
-            {
-              model: Loans,
-              include: [Books]
-            }
-          ]
-        })
-          .then(patron => {
-            if (patron) {
-              res.render('patronDetails', {
-                title: `${patron.first_name} ${patron.last_name}`,
-                patron,
-                errors: err.errors
-              });
-            } else {
-              const error = new Error('Patron not found');
-              error.status = 404;
-              return next(error);
-            }
-          })
-          .catch(err => {
-            return next(err);
-          });
-      } else {
-        throw err;
-      }
-    })
-    .catch(err => {
-      next(err);
+    ]
+  });
+
+  if (!patron) {
+    createError('Patron not found.', 404)
+  }
+
+  const {error, value} = validatePatron(req.body)
+
+  if (error){
+    return res.render('patronDetails', {
+      title: `${patron.first_name} ${patron.last_name}`,
+      patron,
+      errors: error.details
     });
+  }
+  
+  console.log(value)
+  await patron.update(req.body)
+
+  res.status(200).redirect('/patrons/all');
 });
 
 //users can search by a patrons library_id or email. search is case insensitive

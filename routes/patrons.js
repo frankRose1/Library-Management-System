@@ -58,7 +58,7 @@ router.post('/new', async (req, res ) => {
     });
   }
 
-  await Patrons.create(req.body);
+  await Patrons.create(value);
   res.status(201).redirect('/patrons/all');
 });
 
@@ -113,8 +113,7 @@ router.post('/details/:id', async (req, res) => {
     });
   }
   
-  console.log(value)
-  await patron.update(req.body)
+  await patron.update(value)
 
   res.status(200).redirect('/patrons/all');
 });

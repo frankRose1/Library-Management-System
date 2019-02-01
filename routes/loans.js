@@ -167,7 +167,7 @@ router.post('/returns/:id', async (req, res) => {
         loan
     });
   }
-  console.log(value)
+  
   await loan.update(value)
   res.status(204).redirect('/loans/all');
 });

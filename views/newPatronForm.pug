@@ -9,21 +9,21 @@ block content
   form(action="/patrons/new" method="post")
     p
       label(for="first_name") First Name
-      input#first_name(type="text" name="first_name" value=`${patron.first_name || ''}`)
+      input#first_name(type="text" name="first_name" value=`${patron.first_name || ''}` placeholder="First Name")
     p
       label(for="last_name") Last Name
-      input#last_name(type="text" name="last_name" value=`${patron.last_name || ''}`)
+      input#last_name(type="text" name="last_name" value=`${patron.last_name || ''}` placeholder="Last Name")
     p
       label(for="address") Address
-      input#address(type="text" name="address" value=`${patron.address || ''}`)
+      input#address(type="text" name="address" value=`${patron.address || ''}` placeholder="Street Address")
     p
       label(for="zip_code") Zip Code
-      input#zip_code(type="text" name="zip_code" value=`${patron.zip_code || ''}`)
+      input#zip_code(type="text" name="zip_code" value=`${patron.zip_code || ''}` placeholder="5 Digit Zip Code")
     p
       label(for="email") Email
-      input#email(type="text" name="email" value=`${patron.email || ''}`)
+      input#email(type="text" name="email" value=`${patron.email || ''}` placeholder="Email Address")
     p
       label(for="library_id") Library ID
-      input#library_id(type="text" name="library_id" value=`${patron.library_id || ''}`)
+      input#library_id(type="text" name="library_id" value=`${patron.library_id || ''}` placeholder="Library ID")
     p
       input(type="submit" value="Create New Patron")

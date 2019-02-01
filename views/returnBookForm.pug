@@ -13,6 +13,6 @@ block content
 	form(action=`/loans/returns/${loan.id}` method="post")
 		p
 			label(for="returned_on") Returned On:
-			input#returned_on(type="text" name="returned_on" value=`${todaysDate}`)
+			input#returned_on(type="text" name="returned_on" value=`${todaysDate}` placeholder="YYYY-MM-DD")
 		p
 			input(type="submit" value="Return Book")

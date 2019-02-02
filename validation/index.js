@@ -27,7 +27,8 @@ function validateBook(bookData){
     title: Joi.string().max(250).required(),
     author: Joi.string().max(150).required(),
     genre: Joi.string().max(60).required(),
-    first_published: Joi.number().integer().max(currentYear)
+    first_published: Joi.number().integer().max(currentYear),
+    number_in_stock: Joi.number().integer().min(0).max(100).required()
   });
 
   return Joi.validate(bookData, schema, validateOptions)

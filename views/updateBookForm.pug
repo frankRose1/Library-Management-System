@@ -22,6 +22,9 @@ block content
       label(for="first_published") First Published
       input#first_published(type="text" name="first_published" value=`${book.first_published || ''}`)
     p
+      label(for="number_in_stock") Number in Stock
+      input#number_in_stock(type="number" min="0" max="100" name="number_in_stock" value=`${book.number_in_stock}`)
+    p
       input(type="submit" value="Update")
 
     h2 Loan History

@@ -148,6 +148,7 @@ router.get('/details/:id', async (req, res) => {
         ]
       }]
   });
+  console.log(book)
   if (!book){
     createError('Book not found.', 404)
   }

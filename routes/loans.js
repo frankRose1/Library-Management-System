@@ -89,25 +89,47 @@ router.get('/new', async (req, res) => {
   });
 });
 
+/**
+ * Used in POST /loans/new to show any errors related to creating a new loan
+ * @param {object} req - request object 
+ * @param {object} res - response object
+ * @param {array} errors - errors array to be display to the client
+ */
+async function showNewLoanErrors(req, res, errors){
+  const [books, patrons] = await Promise.all([Books.findAll(), Patrons.findAll()])
+  return res
+    .status(400)
+    .render('newLoanForm', {
+      title: 'New Loan',
+      loaned_on: req.body.loaned_on,
+      return_by: req.body.return_by,
+      errors,
+      books,
+      patrons,
+  })
+}
+
 router.post('/new', async (req, res) => {
 
-  const {error, value} = validateLoan(req.body)
+  const {error, value} = validateLoan(req.body);
 
   if (error){
-    const [books, patrons] = await Promise.all([Books.findAll(), Patrons.findAll()])
-    return res
-      .status(400)
-      .render('newLoanForm', {
-        title: 'New Loan',
-        errors: error.details,
-        loaned_on: req.body.loaned_on,
-        return_by: req.body.return_by,
-        books,
-        patrons,
-    })
+    return showNewLoanErrors(req, res, error.details)
   }
 
-  await Loans.create(value);
+  const book = await Books.findById(req.body.book_id);
+  if(!book) {
+    createError('Book not found.', 404)
+  }
+
+  if(book.number_in_stock === 0) {
+    return showNewLoanErrors(req, res, [{message: `"${book.title}" is out of stock!`}])
+  }
+
+  console.log('before', book.number_in_stock)
+  book.number_in_stock--;
+  console.log('after', book.number_in_stock)
+  await Promise.all([Loans.create(value), book.save()]);
 
   res.status(201).redirect('/loans/all');
 });
@@ -151,6 +173,8 @@ router.post('/returns/:id', async (req, res) => {
     ]
   });
 
+  console.log(loan)
+
   if (!loan){
     createError('Loan not found.', 404)
   }
@@ -171,5 +195,6 @@ router.post('/returns/:id', async (req, res) => {
   await loan.update(value)
   res.status(204).redirect('/loans/all');
 });
+
 
 module.exports = router

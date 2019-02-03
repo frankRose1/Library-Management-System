@@ -11,6 +11,26 @@ const createError = require('../utils/createError')
 const checkQueryParam = require('../middleware/checkQueryParam')
 
 /**
+ * Used in POST /loans/new to show any errors related to creating a new loan
+ * @param {object} req - request object 
+ * @param {object} res - response object
+ * @param {array} errors - errors array to be display to the client
+ */
+async function showNewLoanErrors(req, res, errors){
+  const [books, patrons] = await Promise.all([Books.findAll(), Patrons.findAll()])
+  return res
+    .status(400)
+    .render('newLoanForm', {
+      title: 'New Loan',
+      loaned_on: req.body.loaned_on,
+      return_by: req.body.return_by,
+      errors,
+      books,
+      patrons,
+  })
+}
+
+/**
  * All routes are prefixed with "/loans"
  */
 
@@ -89,26 +109,6 @@ router.get('/new', async (req, res) => {
   });
 });
 
-/**
- * Used in POST /loans/new to show any errors related to creating a new loan
- * @param {object} req - request object 
- * @param {object} res - response object
- * @param {array} errors - errors array to be display to the client
- */
-async function showNewLoanErrors(req, res, errors){
-  const [books, patrons] = await Promise.all([Books.findAll(), Patrons.findAll()])
-  return res
-    .status(400)
-    .render('newLoanForm', {
-      title: 'New Loan',
-      loaned_on: req.body.loaned_on,
-      return_by: req.body.return_by,
-      errors,
-      books,
-      patrons,
-  })
-}
-
 router.post('/new', async (req, res) => {
 
   const {error, value} = validateLoan(req.body);
@@ -126,9 +126,7 @@ router.post('/new', async (req, res) => {
     return showNewLoanErrors(req, res, [{message: `"${book.title}" is out of stock!`}])
   }
 
-  console.log('before', book.number_in_stock)
   book.number_in_stock--;
-  console.log('after', book.number_in_stock)
   await Promise.all([Loans.create(value), book.save()]);
 
   res.status(201).redirect('/loans/all');
@@ -173,10 +171,12 @@ router.post('/returns/:id', async (req, res) => {
     ]
   });
 
-  console.log(loan)
-
   if (!loan){
     createError('Loan not found.', 404)
+  }
+
+  if (loan.returned_on){
+    createError('This loan has already been processed.', 400)
   }
 
   const { error, value } = validateLoanReturn(req.body);
@@ -191,8 +191,9 @@ router.post('/returns/:id', async (req, res) => {
         loan
     });
   }
-  
-  await loan.update(value)
+
+  loan.Book.number_in_stock++;
+  await Promise.all([loan.update(value), loan.Book.save()])
   res.status(204).redirect('/loans/all');
 });
 

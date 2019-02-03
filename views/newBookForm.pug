@@ -20,4 +20,7 @@ block content
       label(for="first_published") First Published
       input#first_published(name="first_published" type="text" value=`${book.first_published || ""}` placeholder="(e.g.) 2005")
     p
+      label(for="number_in_stock") Number in Stock
+      input#number_in_stock(type="number" min="0" max="100" name="number_in_stock" value=`${book.number_in_stock}`)
+    p
       input(type="submit" value="Create New Book")

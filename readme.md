@@ -38,6 +38,7 @@ If you'd like to test this app
 * Sequelize Validation will catch any required fields that are missing or invalid on creation/updates
 * Books can be filtered by their status, either ```overdue``` or ```checked out```
 * Books can be searched by ```title``` or ```author```
+* Book inventory will be decremented when a loan is taken out and incremented when the book is returned
 
 ## Technologies Used
 * node

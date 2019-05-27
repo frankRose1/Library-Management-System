@@ -1,10 +1,10 @@
 {
   "name": "library-manager",
   "version": "0.0.1",
-  "description": "Using Node.js and Sequelize to create a library managmement system.",
+  "description": "Using Node, Express, and Sequelize to create a library managmement system.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watchAll --runInBand --verbose",
     "start": "node ./bin/www"
   },
   "repository": {
@@ -31,5 +31,10 @@
     "sequelize": "^4.38.0",
     "sequelize-cli": "^4.0.0",
     "sqlite3": "^4.0.2"
+  },
+  "devDependencies": {
+    "faker": "^4.1.0",
+    "jest": "^24.8.0",
+    "supertest": "^4.0.2"
   }
 }

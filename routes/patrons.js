@@ -1,17 +1,17 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
 const Patrons = require('../models').Patrons;
 const Loans = require('../models').Loans;
 const Books = require('../models').Books;
 const { Op } = require('sequelize');
 const createError = require('../utils/createError');
-const { validatePatron } = require('../validation')
+const { validatePatron } = require('../validation');
 
 /**
  * All routes are prefixed with "/patrons"
  */
 
-async function fetchPatrons(req, res){
+async function fetchPatrons(req, res) {
   const page = req.params.page || 1;
   const limit = 5;
   const offset = page * limit - limit;
@@ -45,13 +45,11 @@ router.get('/new', (req, res) => {
   res.render('newPatronForm', { title: 'New Patron', patron: {} });
 });
 
-router.post('/new', async (req, res ) => {
+router.post('/new', async (req, res) => {
   const { error, value } = validatePatron(req.body);
 
   if (error) {
-    return res
-      .status(400)
-      .render('newPatronForm', {
+    return res.status(400).render('newPatronForm', {
       title: 'New Patron',
       patron: Patrons.build(req.body),
       errors: error.details
@@ -94,26 +92,26 @@ router.post('/details/:id', async (req, res) => {
     include: [
       {
         model: Loans,
-        include: [ Books ]
+        include: [Books]
       }
     ]
   });
 
   if (!patron) {
-    createError('Patron not found.', 404)
+    createError('Patron not found.', 404);
   }
 
-  const {error, value} = validatePatron(req.body)
+  const { error, value } = validatePatron(req.body);
 
-  if (error){
-    return res.render('patronDetails', {
+  if (error) {
+    return res.status(400).render('patronDetails', {
       title: `${patron.first_name} ${patron.last_name}`,
       patron,
       errors: error.details
     });
   }
-  
-  await patron.update(value)
+
+  await patron.update(value);
 
   res.status(200).redirect('/patrons/all');
 });
@@ -139,6 +137,5 @@ router.post('/search', async (req, res) => {
   });
   res.render('allPatrons', { title: 'Patrons', patrons, search_query });
 });
-
 
 module.exports = router;

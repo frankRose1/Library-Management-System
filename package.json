@@ -2,10 +2,10 @@
   "name": "library-manager",
   "version": "0.0.1",
   "description": "Using Node, Express, and Sequelize to create a library managmement system.",
-  "main": "app.js",
+  "main": "./src/app.js",
   "scripts": {
     "test": "jest --watchAll --runInBand --verbose",
-    "start": "node ./bin/www"
+    "start": "node ./src/bin/www"
   },
   "repository": {
     "type": "git",

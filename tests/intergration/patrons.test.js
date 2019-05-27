@@ -36,7 +36,6 @@ describe('/patrons', () => {
   describe('/all', () => {
     it('should return a list of patrons', async () => {
       const res = await request(server).get('/patrons/all');
-      console.log(res.text);
       expect(res.status).toBe(200);
     });
   });
@@ -51,7 +50,6 @@ describe('/patrons', () => {
     });
 
     it('should respond with patron information for a valid ID', async () => {
-      console.log('logging patron', patron);
       const res = await request(server).get(`/patrons/details/${patron.id}`);
       expect(res.status).toBe(200);
     });
@@ -70,8 +68,14 @@ describe('/patrons', () => {
       const res = await request(server)
         .post(`/patrons/details/${patron.id}`)
         .send(invalidPatronData);
-      console.log(res);
       expect(res.status).toBe(400);
+    });
+
+    it('should respond with a 200 for a valid ID and valid data', async () => {
+      const res = await request(server)
+        .post(`/patrons/details/${patron.id}`)
+        .send(validPatronData);
+      expect(res.status).toBe(200);
     });
   });
 });

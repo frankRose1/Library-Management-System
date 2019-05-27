@@ -1,5 +1,5 @@
-const app = require('../../app');
-const models = require('../../models');
+const app = require('../../src/app');
+const models = require('../../src/models');
 
 /**
  * Will close the server and clear the database

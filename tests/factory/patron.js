@@ -1,5 +1,5 @@
 const faker = require('faker');
-const Patron = require('../../models').Patrons;
+const Patron = require('../../src/models').Patrons;
 
 /**
  * Generate an object which container attributes needed

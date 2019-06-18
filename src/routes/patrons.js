@@ -102,7 +102,6 @@ router.post('/details/:id', async (req, res) => {
   }
 
   const { error, value } = validatePatron(req.body);
-
   if (error) {
     return res.status(400).render('patronDetails', {
       title: `${patron.first_name} ${patron.last_name}`,
@@ -113,7 +112,7 @@ router.post('/details/:id', async (req, res) => {
 
   await patron.update(value);
 
-  res.status(200).redirect('/patrons/all');
+  res.redirect('/patrons/all');
 });
 
 //users can search by a patrons library_id or email. search is case insensitive

@@ -190,7 +190,7 @@ router.post('/details/:id', async (req, res) => {
   }
 
   await book.update(value);
-  res.status(204).redirect('/books/all');
+  res.redirect('/books/all');
 });
 
 //Users can search a book by title or author. search is case insensitive

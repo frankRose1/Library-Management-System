@@ -13,7 +13,7 @@ describe('/patrons', () => {
     email: 'harry@gmail.com',
     zip_code: '34568',
     address: ' 63 Hogwarts Lane',
-    library_id: 'MC4567'
+    library_id: 'MC45671'
   };
 
   const invalidPatronData = {
@@ -30,15 +30,22 @@ describe('/patrons', () => {
 
   afterEach(async () => {
     // close the server drop the database
-    await tearDownApp(server);
+    server = await tearDownApp(server);
   });
 
-  describe('/all', () => {
+  describe('GET /all', () => {
     it('should return a list of patrons', async () => {
       const res = await request(server).get('/patrons/all');
       expect(res.status).toBe(200);
     });
   });
+
+  describe('GET /new', () => {
+    it('should return a 200 and the new patron form', async () => {
+      const res = await request(server).get('/patrons/new')
+      expect(res.status).toBe(200)
+    })
+  })
 
   describe('GET /details/:id', () => {
     it("should respond with a 404 if a patron doesn't exist", async () => {
@@ -71,11 +78,21 @@ describe('/patrons', () => {
       expect(res.status).toBe(400);
     });
 
-    it('should respond with a 200 for a valid ID and valid data', async () => {
+    it('should redirect and respond with a 302 for a valid ID and valid data', async () => {
       const res = await request(server)
         .post(`/patrons/details/${patron.id}`)
         .send(validPatronData);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(302);
     });
   });
+
+  describe('POST /search', () => {
+    it('should return a 200 for a valid search query', async () => {
+      const res = await request(server)
+        .post('/patrons/search')
+        .send({search_query: patron.library_id})
+      expect(res.status).toBe(200)
+    })
+  })
+
 });

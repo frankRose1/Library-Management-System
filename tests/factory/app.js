@@ -4,6 +4,7 @@ const models = require('../../src/models');
 /**
  * Will close the server and clear the database
  * @param {object} server Instance of the express server to be closed
+ * @return null
  */
 const tearDownApp = async server => {
   await Promise.all(
@@ -14,6 +15,7 @@ const tearDownApp = async server => {
     })
   );
   await server.close();
+  return null;
 };
 
 /**
@@ -24,9 +26,7 @@ const tearDownApp = async server => {
  */
 const initApp = async (port = 5000) => {
   await models.sequelize.sync();
-  const server = app.listen(port, () =>
-    console.log(`Server is listening on ${port}`)
-  );
+  const server = app.listen(port);
   return server;
 };
 

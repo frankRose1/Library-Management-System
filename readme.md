@@ -48,3 +48,6 @@ If you'd like to test this app
 * SQLite
 * joi
 * joi-date-extensions
+* jest
+* supertest
+* faker

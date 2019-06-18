@@ -1,8 +1,10 @@
-const request = require('supertest');
+const { execGet, execPost } = require('../utils/requests');
 const { initApp, tearDownApp } = require('../factory/app');
 const patronFactory = require('../factory/patron');
 
-xdescribe('/patrons', () => {
+describe('/patrons', () => {
+  jest.setTimeout(25000);
+
   let server;
   let patron;
 
@@ -35,62 +37,52 @@ xdescribe('/patrons', () => {
 
   describe('GET /all', () => {
     it('should return a list of patrons', async () => {
-      const res = await request(server).get('/patrons/all');
+      const res = await execGet(server, '/patrons/all')
       expect(res.status).toBe(200);
     });
   });
 
   describe('GET /new', () => {
     it('should return a 200 and the new patron form', async () => {
-      const res = await request(server).get('/patrons/new');
+      const res = await execGet(server, '/patrons/new');
       expect(res.status).toBe(200);
     });
   });
 
   describe('GET /details/:id', () => {
     it("should respond with a 404 if a patron doesn't exist", async () => {
-      const res = await request(server).get(
-        `/patrons/details/${patron.id + 10}`
-      );
+      const res = await execGet(server, `/patrons/details/${patron.id + 20}`);
       expect(res.status).toBe(404);
       expect(res.notFound).toBe(true);
     });
 
     it('should respond with patron information for a valid ID', async () => {
-      const res = await request(server).get(`/patrons/details/${patron.id}`);
+      const res = await execGet(server, `/patrons/details/${patron.id}`);
       expect(res.status).toBe(200);
     });
   });
 
   describe('POST /details/:id', () => {
     it("should respond with a 404 if a patron doesn't exist", async () => {
-      const res = await request(server)
-        .post(`/patrons/details/${patron.id + 10}`)
-        .send(validPatronData);
+      const res = await execPost(server, `/patrons/details/${patron.id + 20}` , {});
       expect(res.status).toBe(404);
       expect(res.notFound).toBe(true);
     });
 
     it('should respond with a 400 if invalid data is sent', async () => {
-      const res = await request(server)
-        .post(`/patrons/details/${patron.id}`)
-        .send(invalidPatronData);
+      const res = await execPost(server, `/patrons/details/${patron.id}` , invalidPatronData);
       expect(res.status).toBe(400);
     });
 
     it('should redirect and respond with a 302 for a valid ID and valid data', async () => {
-      const res = await request(server)
-        .post(`/patrons/details/${patron.id}`)
-        .send(validPatronData);
+      const res = await execPost(server, `/patrons/details/${patron.id}` , validPatronData);
       expect(res.status).toBe(302);
     });
   });
 
   describe('POST /search', () => {
     it('should return a 200 for a valid search query', async () => {
-      const res = await request(server)
-        .post('/patrons/search')
-        .send({ search_query: patron.library_id });
+      const res = await execPost(server, '/patrons/search' , { search_query: patron.library_id })
       expect(res.status).toBe(200);
     });
   });

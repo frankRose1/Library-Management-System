@@ -201,7 +201,7 @@ router.post('/returns/:id', async (req, res) => {
 
   loan.Book.number_in_stock++;
   await Promise.all([loan.update(value), loan.Book.save()]);
-  res.status(204).redirect('/loans/all');
+  res.redirect('/loans/all');
 });
 
 module.exports = router;

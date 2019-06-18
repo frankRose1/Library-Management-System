@@ -119,12 +119,6 @@ router.get('/new', async (req, res) => {
 });
 
 router.post('/new', async (req, res) => {
-  const { error, value } = validateLoan(req.body);
-
-  if (error) {
-    return showNewLoanErrors(req, res, error.details);
-  }
-
   const book = await Books.findById(req.body.book_id);
   if (!book) {
     createError('Book not found.', 404);
@@ -136,10 +130,15 @@ router.post('/new', async (req, res) => {
     ]);
   }
 
+  const { error, value } = validateLoan(req.body);
+  if (error) {
+    return showNewLoanErrors(req, res, error.details);
+  }
+
   book.number_in_stock--;
   await Promise.all([Loans.create(value), book.save()]);
 
-  res.status(201).redirect('/loans/all');
+  res.redirect('/loans/all');
 });
 
 router.get('/returns/:id', async (req, res) => {

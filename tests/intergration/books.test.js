@@ -2,7 +2,7 @@ const request = require('supertest');
 const { initApp, tearDownApp } = require('../factory/app');
 const bookFactory = require('../factory/book');
 
-describe('/books', () => {
+xdescribe('/books', () => {
   let server;
   let book;
 

@@ -2,7 +2,7 @@ const request = require('supertest');
 const { initApp, tearDownApp } = require('../factory/app');
 const patronFactory = require('../factory/patron');
 
-describe('/patrons', () => {
+xdescribe('/patrons', () => {
   let server;
   let patron;
 
@@ -42,10 +42,10 @@ describe('/patrons', () => {
 
   describe('GET /new', () => {
     it('should return a 200 and the new patron form', async () => {
-      const res = await request(server).get('/patrons/new')
-      expect(res.status).toBe(200)
-    })
-  })
+      const res = await request(server).get('/patrons/new');
+      expect(res.status).toBe(200);
+    });
+  });
 
   describe('GET /details/:id', () => {
     it("should respond with a 404 if a patron doesn't exist", async () => {
@@ -90,9 +90,8 @@ describe('/patrons', () => {
     it('should return a 200 for a valid search query', async () => {
       const res = await request(server)
         .post('/patrons/search')
-        .send({search_query: patron.library_id})
-      expect(res.status).toBe(200)
-    })
-  })
-
+        .send({ search_query: patron.library_id });
+      expect(res.status).toBe(200);
+    });
+  });
 });

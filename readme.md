@@ -1,9 +1,11 @@
 # Library Managment System with Node.js & Sequelize
 A library management system for a small library. The goal of this project was to create a more intuitive way of handling the library's books, patrons, and loans. Node, Express, Pug, and the SQL ORM Sequelize are used to create a dynamic website that properly shows the associations between books, patrons and loans. Also includes integration tests, server side validation with Joi, pagination, and a search feature!
 
-## How to Use
-If you'd like to test this app
-* Clone or download this repo
+## Getting Started
+clone/download this repo and follow these steps:
+1) docker-compose run --rm web npm install
+2) docker-compose run --rm web npx sequelize-cli db:create
+3) docker-compse up --build
 * cd in to the project directory and enter ```npm install```
 * ```npm start``` to start the server on localhost:3000
 * To run the tests enter ```npm run test```

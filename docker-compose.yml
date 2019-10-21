@@ -19,7 +19,7 @@ services:
     depends_on:
       - 'postgres'
     ports:
-     - '${DOCKER_WEB_PORT:-127.0.0.1:8000}:8000'
+     - '${PORT:-127.0.0.1:8000}:8000'
     stop_grace_period: '${DOCKER_STOP_GRACE_PERIOD:-3s}'
     volumes:
       - '${DOCKER_WEB_VOLUME:-./public:/app/public}'

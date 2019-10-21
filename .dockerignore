@@ -6,3 +6,4 @@ node_modules
 example.env
 .cache
 coverage/
+library.db

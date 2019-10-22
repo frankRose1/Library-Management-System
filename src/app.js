@@ -2,7 +2,11 @@ const express = require('express');
 require('express-async-errors');
 const bodyParser = require('body-parser');
 const path = require('path');
-const { notFound, renderError } = require('./middleware/errors');
+const routes = require('./routes');
+const {
+  notFoundError,
+  globalErrorHandler
+} = require('./middleware/errors');
 
 const app = express();
 
@@ -14,10 +18,9 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-require('./routes')(app);
+routes(app);
 
-app.use(notFound);
-
-app.use(renderError);
+app.use(notFoundError);
+app.use(globalErrorHandler);
 
 module.exports = app;

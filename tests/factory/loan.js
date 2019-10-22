@@ -1,4 +1,4 @@
-const Loan = require('../../src/models').Loans;
+const { Loan } = require('../../src/models');
 const bookFactory = require('./book');
 const patronFactory = require('./patron');
 const moment = require('moment');

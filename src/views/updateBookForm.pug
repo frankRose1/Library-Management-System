@@ -6,7 +6,7 @@ include mixins/_noLoanHistory
 
 block content
   h1 Book: #{book.title}
-  form(action=`/books/details/${book.id}` method="post")
+  form(action=`/books/detail/${book.id}` method="post")
     if errors
       +errorMessages(errors)
     p

@@ -1,12 +1,10 @@
 const { Router } = require('express');
 const router = Router();
-const Books = require('../models').Books;
-const Loans = require('../models').Loans;
-const Patrons = require('../models').Patrons;
+const { Book, Loan, Patron } = require('../models');
 const Sequelize = require('sequelize');
 const checkQueryParam = require('../middleware/checkQueryParam');
 const { Op } = Sequelize;
-const { validateBook } = require('../validation');
+const { validateBook } = require('../utils/validation');
 const createError = require('../utils/createError');
 const limit = 5; //show this amount of books per page
 
@@ -15,7 +13,7 @@ async function fetchBooks(req, res) {
   const offset = page * limit - limit;
 
   //skip by the amount of the offset value and fetch the value of limit after that
-  const books = await Books.findAndCountAll({
+  const books = await Book.findAndCountAll({
     offset: offset,
     limit: limit
   });
@@ -24,7 +22,7 @@ async function fetchBooks(req, res) {
   const pages = Math.ceil(count / limit);
   //if the user tries to access a page that returns no results, redirect them to the final page
   if (!books.rows.length && offset) {
-    return res.redirect(`/books/all/page/${pages}`);
+    return res.redirect(`/books/page/${pages}`);
   }
 
   res.render('allBooks', {
@@ -45,12 +43,12 @@ async function filterBooks(req, res) {
   //only books that are checked out && overdue
   if (query == 'overdue') {
     //SELECT * FROM books WHERE LOANS return_by < Date.now() && returned_on IS NULL
-    const books = await Books.findAndCountAll({
+    const books = await Book.findAndCountAll({
       offset: offset,
       limit: limit,
       include: [
         {
-          model: Loans,
+          model: Loan,
           where: {
             return_by: {
               [Op.lt]: Date.now()
@@ -76,12 +74,12 @@ async function filterBooks(req, res) {
   //all books that are currently checked out
   if (query == 'checked') {
     // SELECT * FROM books WHERE LOANS returned_on IS NULL && loaned_on < Date.now()
-    const books = await Books.findAndCountAll({
+    const books = await Book.findAndCountAll({
       offset: offset,
       limit: limit,
       include: [
         {
-          model: Loans,
+          model: Loan,
           where: {
             returned_on: {
               [Op.eq]: null
@@ -106,11 +104,8 @@ async function filterBooks(req, res) {
   }
 }
 
-/**
- * All routes are prefixed with "/books"
- */
-router.get('/all', fetchBooks);
-router.get('/all/page/:page', fetchBooks);
+router.get('/', fetchBooks);
+router.get('/page/:page', fetchBooks);
 
 router.get('/filter/:query', checkQueryParam, filterBooks);
 router.get('/filter/:query/page/:page', checkQueryParam, filterBooks);
@@ -126,26 +121,26 @@ router.post('/new', async (req, res) => {
     return res.render('newBookForm', {
       title: 'New Book',
       errors: error.details,
-      book: Books.build(req.body)
+      book: Book.build(req.body)
     });
   }
 
-  await Books.create(value);
+  await Book.create(value);
   res.status(201).redirect('/books/all');
 });
 
-router.get('/details/:id', async (req, res) => {
+router.get('/detail/:id', async (req, res) => {
   const bookId = req.params.id;
-  const book = await Books.findOne({
+  const book = await Book.findOne({
     where: {
       id: bookId
     },
     include: [
       {
-        model: Loans,
+        model: Loan,
         include: [
           {
-            model: Patrons,
+            model: Patron,
             attributes: ['first_name', 'last_name', 'id']
           }
         ]
@@ -158,17 +153,17 @@ router.get('/details/:id', async (req, res) => {
   res.render('updateBookForm', { title: 'Book Details', book });
 });
 
-router.post('/details/:id', async (req, res) => {
-  const book = await Books.findOne({
+router.post('/detail/:id', async (req, res) => {
+  const book = await Book.findOne({
     where: {
       id: req.params.id
     },
     include: [
       {
-        model: Loans,
+        model: Loan,
         include: [
           {
-            model: Patrons,
+            model: Patron,
             attributes: ['first_name', 'last_name', 'id']
           }
         ]
@@ -190,13 +185,13 @@ router.post('/details/:id', async (req, res) => {
   }
 
   await book.update(value);
-  res.redirect('/books/all');
+  res.redirect('/books');
 });
 
 //Users can search a book by title or author. search is case insensitive
 router.post('/search', async (req, res) => {
   const { search_query } = req.body;
-  const books = await Books.findAll({
+  const books = await Book.findAll({
     where: {
       [Op.or]: [
         {

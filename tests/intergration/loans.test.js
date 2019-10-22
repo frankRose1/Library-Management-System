@@ -4,7 +4,7 @@ const loanFactory = require('../factory/loan');
 const bookFactory = require('../factory/book');
 const patronFactory = require('../factory/patron');
 const moment = require('moment');
-const Book = require('../../src/models').Books;
+const { Book } = require('../../src/models');
 
 describe('/loans', () => {
   jest.setTimeout(25000);
@@ -25,9 +25,9 @@ describe('/loans', () => {
     server = await tearDownApp(server);
   });
 
-  describe('GET /all', () => {
+  describe('GET /', () => {
     it('should return a 200', async () => {
-      const res = await execGet(server, '/loans/all');
+      const res = await execGet(server, '/loans');
       expect(res.status).toBe(200);
     });
   });

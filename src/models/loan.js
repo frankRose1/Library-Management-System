@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var Loans = sequelize.define('Loans', {
+  var Loan = sequelize.define('Loan', {
     book_id: {
       type: DataTypes.INTEGER,
       validate: {
@@ -61,11 +61,11 @@ module.exports = (sequelize, DataTypes) => {
   });
   //BelongsTo associations are associations where the foreign key for the one-to-one relation exists on the source model
     //Loans is the source model, the foreign key is referring to the id's on the Books and Patrons model
-  Loans.associate = function(models) {
+  Loan.associate = function(models) {
     // associations can be defined here
-    Loans.belongsTo(models.Books, {foreignKey: 'book_id', targetKey: 'id'});
-    Loans.belongsTo(models.Patrons, {foreignKey: 'patron_id', targetKey: 'id'});
+    Loan.belongsTo(models.Book, {foreignKey: 'book_id', targetKey: 'id'});
+    Loan.belongsTo(models.Patron, {foreignKey: 'patron_id', targetKey: 'id'});
   };
 
-  return Loans;
+  return Loan;
 };

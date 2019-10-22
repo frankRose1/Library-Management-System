@@ -32,40 +32,40 @@ describe('/books', () => {
     server = await tearDownApp(server);
   });
 
-  describe('GET /all', () => {
+  describe('GET /', () => {
     it('should return a 200 and a list of books', async () => {
-      const res = await execGet(server, '/books/all');
+      const res = await execGet(server, '/books');
       expect(res.status).toBe(200);
     });
   });
 
-  describe('GET /details/:id', () => {
+  describe('GET /detail/:id', () => {
     it('should return a 404 if a book doesnt exist', async () => {
-      const res = await execGet(server, `/books/details/${book.id + 20}`);
+      const res = await execGet(server, `/books/detail/${book.id + 20}`);
       expect(res.status).toBe(404);
       expect(res.notFound).toBe(true);
     });
 
     it('should return a 200 for a valid ID', async () => {
-      const res = await execGet(server, `/books/details/${book.id}`);
+      const res = await execGet(server, `/books/detail/${book.id}`);
       expect(res.status).toBe(200);
     });
   });
 
-  describe('POST /details/:id', () => {
+  describe('POST /detail/:id', () => {
     it('should return a 404 if a book doesnt exist', async () => {
-      const res = await execPost(server, `/books/details/${book.id + 20}`, {});
+      const res = await execPost(server, `/books/detail/${book.id + 20}`, {});
       expect(res.status).toBe(404);
       expect(res.notFound).toBe(true);
     });
 
     it('should return a 400 for invalid data', async () => {
-      const res = await execPost(server, `/books/details/${book.id}`, invalidBookData)
+      const res = await execPost(server, `/books/detail/${book.id}`, invalidBookData)
       expect(res.status).toBe(400);
     });
 
     it('should redirect and respond with a 302 for valid input and ID', async () => {
-      const res = await execPost(server, `/books/details/${book.id}`, validBookData);
+      const res = await execPost(server, `/books/detail/${book.id}`, validBookData);
       expect(res.status).toBe(302);
     });
   });

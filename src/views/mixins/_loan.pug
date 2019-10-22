@@ -1,11 +1,11 @@
 mixin loan(loan={}, patron={}, book={})
   tr
     td
-      a(href=`/books/details/${book.id || loan.Book.id}`) #{book.title || loan.Book.title}
+      a(href=`/books/detail/${book.id || loan.Book.id}`) #{book.title || loan.Book.title}
     td
       - const patronId = typeof(loan.Patron) !== 'undefined' ? loan.Patron.id : patron.id;
       - const patronName = typeof(loan.Patron) !== 'undefined' ? `${loan.Patron.first_name} ${loan.Patron.last_name}` : `${patron.first_name} ${patron.last_name}`;
-      a(href=`/patrons/details/${patronId}`)= patronName
+      a(href=`/patrons/detail/${patronId}`)= patronName
     td= loan.loaned_on
     td= loan.return_by
     td= loan.returned_on

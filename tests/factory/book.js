@@ -1,5 +1,5 @@
 const faker = require('faker');
-const Book = require('../../src/models').Books;
+const { Book } = require('../../src/models');
 
 /**
  * Generate an object which container attributes needed

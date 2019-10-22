@@ -1,14 +1,15 @@
 const { Router } = require('express');
 const router = Router();
 const moment = require('moment');
-const Loans = require('../models').Loans;
-const Books = require('../models').Books;
-const Patrons = require('../models').Patrons;
+const { Loan, Book, Patron } = require('../models');
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
-const { validateLoan, validateLoanReturn } = require('../validation');
 const createError = require('../utils/createError');
 const checkQueryParam = require('../middleware/checkQueryParam');
+const { 
+  validateLoan, 
+  validateLoanReturn
+} = require('../utils/validation');
 
 /**
  * Used in POST /loans/new to show any errors related to creating a new loan
@@ -18,8 +19,8 @@ const checkQueryParam = require('../middleware/checkQueryParam');
  */
 async function showNewLoanErrors(req, res, errors) {
   const [books, patrons] = await Promise.all([
-    Books.findAll(),
-    Patrons.findAll()
+    Book.findAll(),
+    Patron.findAll()
   ]);
   return res.status(400).render('newLoanForm', {
     title: 'New Loan',
@@ -31,18 +32,14 @@ async function showNewLoanErrors(req, res, errors) {
   });
 }
 
-/**
- * All routes are prefixed with "/loans"
- */
-
-router.get('/all', async (req, res) => {
-  const loans = await Loans.findAll({
+router.get('/', async (req, res) => {
+  const loans = await Loan.findAll({
     include: [
       {
-        model: Patrons
+        model: Patron
       },
       {
-        model: Books
+        model: Book
       }
     ]
   });
@@ -54,13 +51,13 @@ router.get('/filter/:query', checkQueryParam, async (req, res) => {
   let loans;
   if (query == 'checked') {
     //SELECT * FROM loan WHERE loaned_on <= Date.now() AND returned_on IS NULL
-    loans = await Loans.findAll({
+    loans = await Loan.findAll({
       include: [
         {
-          model: Patrons
+          model: Patron
         },
         {
-          model: Books
+          model: Book
         }
       ],
       where: {
@@ -77,13 +74,13 @@ router.get('/filter/:query', checkQueryParam, async (req, res) => {
 
   if (query == 'overdue') {
     //SELECT * FROM loan WHERE return_by < DATE.now() AND returned_on IS NULL
-    loans = await Loans.findAll({
+    loans = await Loan.findAll({
       include: [
         {
-          model: Patrons
+          model: Patron
         },
         {
-          model: Books
+          model: Book
         }
       ],
       where: {
@@ -106,8 +103,8 @@ router.get('/new', async (req, res) => {
     .add(1, 'week')
     .format('YYYY-MM-DD');
   const [books, patrons] = await Promise.all([
-    Books.findAll(),
-    Patrons.findAll()
+    Book.findAll(),
+    Patron.findAll()
   ]);
   res.render('newLoanForm', {
     title: 'New Loan',
@@ -119,7 +116,7 @@ router.get('/new', async (req, res) => {
 });
 
 router.post('/new', async (req, res) => {
-  const book = await Books.findById(req.body.book_id);
+  const book = await Book.findById(req.body.book_id);
   if (!book) {
     createError('Book not found.', 404);
   }
@@ -136,24 +133,24 @@ router.post('/new', async (req, res) => {
   }
 
   book.number_in_stock--;
-  await Promise.all([Loans.create(value), book.save()]);
+  await Promise.all([Loan.create(value), book.save()]);
 
-  res.redirect('/loans/all');
+  res.redirect('/loans');
 });
 
 router.get('/returns/:id', async (req, res) => {
   const todaysDate = moment().format('YYYY-MM-DD');
   const { id } = req.params;
-  const loan = await Loans.findOne({
+  const loan = await Loan.findOne({
     where: {
       id: id
     },
     include: [
       {
-        model: Patrons
+        model: Patron
       },
       {
-        model: Books
+        model: Book
       }
     ]
   });
@@ -166,16 +163,16 @@ router.get('/returns/:id', async (req, res) => {
 });
 
 router.post('/returns/:id', async (req, res) => {
-  const loan = await Loans.findOne({
+  const loan = await Loan.findOne({
     where: {
       id: req.params.id
     },
     include: [
       {
-        model: Patrons
+        model: Patron
       },
       {
-        model: Books
+        model: Book
       }
     ]
   });
@@ -201,7 +198,7 @@ router.post('/returns/:id', async (req, res) => {
 
   loan.Book.number_in_stock++;
   await Promise.all([loan.update(value), loan.Book.save()]);
-  res.redirect('/loans/all');
+  res.redirect('/loans');
 });
 
 module.exports = router;

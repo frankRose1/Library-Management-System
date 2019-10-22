@@ -1,8 +1,8 @@
 mixin pagination(category, filtered, query, page, pages, count)
   -const filteredPrev = `/${category}/filter/${query}/page/${page - 1}`;
   -const filteredNext = `/${category}/filter/${query}/page/${parseFloat(page) + 1}`;
-  -const prev = `/${category}/all/page/${page - 1}`;
-  -const next = `/${category}/all/page/${parseFloat(page) + 1}`;
+  -const prev = `/${category}/page/${page - 1}`;
+  -const next = `/${category}/page/${parseFloat(page) + 1}`;
   -const prevLink = filtered ? filteredPrev : prev;
   -const nextLink = filtered ? filteredNext : next;
 

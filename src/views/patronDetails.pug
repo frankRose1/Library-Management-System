@@ -8,7 +8,7 @@ block content
   h1 Patron: #{title}
   if errors
     +errorMessages(errors)
-  form(action=`/patrons/details/${patron.id}` method="post")
+  form(action=`/patrons/detail/${patron.id}` method="post")
     p
       label(for="first_name") First Name
       input#first_name(type="text" name="first_name" value=`${patron.first_name}`)

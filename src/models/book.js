@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var Books = sequelize.define('Books', {
+  var Book = sequelize.define('Book', {
     title: {
       type: DataTypes.STRING,
       validate: {
@@ -40,9 +40,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     timestamps: false
   });
-  Books.associate = function(models) {
+  Book.associate = function(models) {
     //has many will place the foreign key on the target, in this case Loans
-    Books.hasMany(models.Loans, {foreignKey: 'book_id', targetKey: 'id'});
+    Book.hasMany(models.Loan, {foreignKey: 'book_id', targetKey: 'id'});
   };
-  return Books;
+  return Book;
 };

@@ -1,7 +1,7 @@
 mixin book(book = {})
   tr
     td
-      a(href=`/books/details/${book.id}`)= book.title
+      a(href=`/books/detail/${book.id}`)= book.title
     td= book.author
     td= book.genre
     td= book.first_published

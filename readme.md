@@ -5,10 +5,9 @@ A library management system for a small library. The goal of this project was to
 clone/download this repo and follow these steps:
 1) docker-compose run --rm web npm install
 2) docker-compose run --rm web npx sequelize-cli db:create
-3) docker-compse up --build
-* cd in to the project directory and enter ```npm install```
-* ```npm start``` to start the server on localhost:3000
-* To run the tests enter ```npm run test```
+3) docker-compose run --rm web npx sequelize-cli db:migrate
+4) docker-compose run --rm web npx sequelize-cli db:seed:all
+5) docker-compse up --build
 
 ## App Features
 

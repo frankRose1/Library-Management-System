@@ -21,18 +21,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       zip_code: {
-        type: Sequelize.STRING
-      },
-      library_id: {
         type: Sequelize.INTEGER
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+      library_id: {
+        type: Sequelize.STRING
       }
     });
   },

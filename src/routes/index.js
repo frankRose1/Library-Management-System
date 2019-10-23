@@ -8,8 +8,8 @@ const loans = require('./loans');
  * @param {Object} app - express app
  */
 module.exports = function(app){
-  app.use('/', home)
-  app.use('/books', books)
-  app.use('/patrons', patrons)
-  app.use('/loans', loans)
+  app.use('/', home);
+  app.use('/books', books);
+  app.use('/patrons', patrons);
+  app.use('/loans', loans);
 };

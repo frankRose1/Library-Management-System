@@ -20,13 +20,13 @@ module.exports = {
       first_published: {
         type: Sequelize.INTEGER
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+      number_in_stock: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+          max: 100
+        }
       }
     });
   },

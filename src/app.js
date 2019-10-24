@@ -1,5 +1,4 @@
 const express = require('express');
-require('express-async-errors');
 const bodyParser = require('body-parser');
 const path = require('path');
 const routes = require('./routes');
@@ -10,7 +9,6 @@ const {
 
 const app = express();
 
-//set the view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 

@@ -16,7 +16,7 @@ clone/download this repo and follow these steps:
 * Loans belong to the Patron and Book models and are linked by the ```book_id``` and ```patron_id```
 
 ### Patrons
-* ```patrons/all``` will get all patrons in the DB
+* ```/patrons``` will get a list of patrons
   * pagination is used to make the returned data more managable
 * Each patron has a details page, where their information can be updated and loan can history is viewed
 * New patrons can be created and added to the DB
@@ -33,7 +33,7 @@ clone/download this repo and follow these steps:
   * A returned loan will immediately be reflected in the patron's and book's loan history
 
 ### Books
-* ```books/all``` will get all books in the DB
+* ```/books``` will get a list of books
   * pagination is used to make the returned data more managable
 * Each book has a details page, where the information can be updated and loan can history is viewed
 * New books can be created and added to the DB
@@ -47,7 +47,8 @@ clone/download this repo and follow these steps:
 * express
 * pug
 * sequelize
-* SQLite
+* sequelize-cli
+* pg
 * joi
 * joi-date-extensions
 * moment

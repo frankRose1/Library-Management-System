@@ -1,6 +1,5 @@
-const BaseJoi = require('joi');
-const Extension = require('joi-date-extensions');
-const Joi = BaseJoi.extend(Extension);
+const Joi = require('@hapi/joi')
+    .extend(require('@hapi/joi-date'));
 
 const validateOptions = {
   abortEarly: false,

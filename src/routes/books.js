@@ -126,11 +126,13 @@ router.post('/new', async (req, res) => {
   }
 
   await Book.create(value);
+
   res.status(201).redirect('/books/all');
 });
 
 router.get('/detail/:id', async (req, res) => {
   const bookId = req.params.id;
+
   const book = await Book.findOne({
     where: {
       id: bookId
@@ -147,9 +149,11 @@ router.get('/detail/:id', async (req, res) => {
       }
     ]
   });
+
   if (!book) {
     createError('Book not found.', 404);
   }
+
   res.render('updateBookForm', { title: 'Book Details', book });
 });
 
@@ -176,6 +180,7 @@ router.post('/detail/:id', async (req, res) => {
   }
 
   const { error, value } = validateBook(req.body);
+
   if (error) {
     return res.status(400).render('updateBookForm', {
       title: 'Book Details',
@@ -185,12 +190,14 @@ router.post('/detail/:id', async (req, res) => {
   }
 
   await book.update(value);
+
   res.redirect('/books');
 });
 
 //Users can search a book by title or author. search is case insensitive
 router.post('/search', async (req, res) => {
   const { search_query } = req.body;
+
   const books = await Book.findAll({
     where: {
       [Op.or]: [
@@ -207,6 +214,7 @@ router.post('/search', async (req, res) => {
       ]
     }
   });
+
   res.render('allBooks', { title: 'Books', books, search_query });
 });
 

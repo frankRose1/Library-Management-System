@@ -53,11 +53,13 @@ router.post('/new', async (req, res) => {
   }
 
   await Patron.create(value);
+
   res.status(201).redirect('/patrons/all');
 });
 
 router.get('/detail/:id', async (req, res) => {
   const { id } = req.params;
+
   const patron = await Patron.findOne({
     where: {
       id: id
@@ -75,6 +77,7 @@ router.get('/detail/:id', async (req, res) => {
   }
 
   const title = `${patron.first_name} ${patron.last_name}`;
+
   res.render('patronDetails', { title, patron });
 });
 
@@ -98,6 +101,7 @@ router.post('/detail/:id', async (req, res) => {
   }
 
   const { error, value } = validatePatron(req.body);
+
   if (error) {
     return res.status(400).render('patronDetails', {
       title: `${patron.first_name} ${patron.last_name}`,
@@ -114,6 +118,7 @@ router.post('/detail/:id', async (req, res) => {
 //users can search by a patrons library_id or email. search is case insensitive
 router.post('/search', async (req, res) => {
   const { search_query } = req.body;
+
   const patrons = await Patron.findAll({
     where: {
       [Op.or]: [
@@ -130,6 +135,7 @@ router.post('/search', async (req, res) => {
       ]
     }
   });
+
   res.render('allPatrons', { title: 'Patrons', patrons, search_query });
 });
 

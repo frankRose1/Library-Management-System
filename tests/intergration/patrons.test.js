@@ -8,7 +8,6 @@ describe('/patrons', () => {
   let server;
   let patron;
 
-  //to be sent with a post request
   const validPatronData = {
     first_name: 'Harry',
     last_name: 'Potter',

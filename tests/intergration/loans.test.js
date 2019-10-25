@@ -78,7 +78,7 @@ describe('/loans', () => {
         return_by: weekAwayDate
       };
       const res = await execPost(server, '/loans/new', data);
-      const updatedBook = await Book.findById(book.id);
+      const updatedBook = await Book.findByPk(book.id);
       expect(res.status).toBe(302);
       expect(updatedBook.number_in_stock).toBe(book.number_in_stock - 1);
     });
@@ -128,7 +128,7 @@ describe('/loans', () => {
       const initialBookStock = 3
       const loan = await loanFactory({}, {}, {number_in_stock: initialBookStock});
       const res = await execPost(server, `/loans/returns/${loan.id}`, { returned_on: weekAwayDate });
-      const updatedBook = await Book.findById(loan.book_id)
+      const updatedBook = await Book.findByPk(loan.book_id)
       expect(res.status).toBe(302);
       expect(updatedBook.number_in_stock).toBe(initialBookStock + 1)
     });

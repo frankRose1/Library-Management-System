@@ -1,5 +1,5 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const parser = require('body-parser');
 const path = require('path');
 const routes = require('./routes');
 const {
@@ -13,8 +13,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(parser.json());
+app.use(parser.urlencoded({ extended: true }));
 
 routes(app);
 

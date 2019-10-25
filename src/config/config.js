@@ -11,7 +11,8 @@ module.exports = {
     "password": process.env.POSTGRES_PASSWORD || null,
     "database": process.env.POSTGRES_DB || "test",
     "host": process.env.POSTGRES_HOST || "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   },
   "production": {
     "username": "root",

@@ -4,8 +4,13 @@
   "description": "Using Node, Express, and Sequelize to create a library managmement system.",
   "main": "./src/app.js",
   "scripts": {
-    "test": "jest --watchAll --runInBand --verbose",
-    "start": "node ./src/bin/www"
+    "pretest": "NODE_ENV=test npx sequelize-cli db:migrate",
+    "test": "jest --detectOpenHandles --runInBand --verbose",
+    "start": "node ./src/bin/www",
+    "createDB": "npx sequelize-cli db:create",
+    "migrateDB": "npx sequelize-cli db:migrate",
+    "seedDB": "npx sequelize-cli db:seed:all",
+    "init": "npm run createDB -s && npm run migrateDB -s && npm run seedDB -s"
   },
   "repository": {
     "type": "git",

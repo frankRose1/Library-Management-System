@@ -116,7 +116,8 @@ router.get('/new', async (req, res) => {
 });
 
 router.post('/new', async (req, res) => {
-  const book = await Book.findById(req.body.book_id);
+  const book = await Book.findByPk(req.body.book_id);
+
   if (!book) {
     createError('Book not found.', 404);
   }

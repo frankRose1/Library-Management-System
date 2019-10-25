@@ -3,15 +3,16 @@ A library management system for a small library. The goal of this project was to
 
 ## Getting Started
 clone/download this repo and follow these steps:
-1) Build the services in docker-compose.yml:
+1) rename ```example.env``` to ```.env``` and change variables if necessary
+2) Build the services in docker-compose.yml:
     * ```docker-compose build```
-2) Install project dependencies:
+3) Install project dependencies:
     * ```docker-compose run --rm web npm install```
-3) Create dev database, run migrations, and seed the database:
+4) Create dev database, run migrations, and seed the database:
     * ```docker-compose run --rm web npm run init```
-4) Start the containers:
+5) Start the containers:
     * ```docker-compose up```
-5) Visit http://localhost:8000/ to view the application
+6) Visit http://localhost:8000/ to view the application
     * if running docker in a VM swap "localhost" VM IP address
 
 ## Run Tests

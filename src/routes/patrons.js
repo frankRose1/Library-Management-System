@@ -24,7 +24,7 @@ async function fetchPatrons(req, res) {
     return res.redirect(`/patrons/page/${pages}`);
   }
 
-  res.render('allPatrons', {
+  res.render('patronList', {
     title: 'All Patrons',
     patrons: patrons.rows,
     page,
@@ -78,7 +78,7 @@ router.get('/detail/:id', async (req, res) => {
 
   const title = `${patron.first_name} ${patron.last_name}`;
 
-  res.render('patronDetails', { title, patron });
+  res.render('patronDetail', { title, patron });
 });
 
 router.post('/detail/:id', async (req, res) => {
@@ -103,7 +103,7 @@ router.post('/detail/:id', async (req, res) => {
   const { error, value } = validatePatron(req.body);
 
   if (error) {
-    return res.status(400).render('patronDetails', {
+    return res.status(400).render('patronDetail', {
       title: `${patron.first_name} ${patron.last_name}`,
       patron,
       errors: error.details
@@ -136,7 +136,7 @@ router.post('/search', async (req, res) => {
     }
   });
 
-  res.render('allPatrons', { title: 'Patrons', patrons, search_query });
+  res.render('patronList', { title: 'Patrons', patrons, search_query });
 });
 
 module.exports = router;

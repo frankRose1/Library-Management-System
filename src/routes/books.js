@@ -25,7 +25,7 @@ async function fetchBooks(req, res) {
     return res.redirect(`/books/page/${pages}`);
   }
 
-  res.render('allBooks', {
+  res.render('bookList', {
     title: 'All Books',
     books: books.rows,
     page,
@@ -215,7 +215,7 @@ router.post('/search', async (req, res) => {
     }
   });
 
-  res.render('allBooks', { title: 'Books', books, search_query });
+  res.render('bookList', { title: 'Books', books, search_query });
 });
 
 module.exports = router;

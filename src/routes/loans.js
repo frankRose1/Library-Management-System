@@ -43,7 +43,7 @@ router.get('/', async (req, res) => {
       }
     ]
   });
-  res.render('loansListing', { title: 'Loans', loans });
+  res.render('loanList', { title: 'Loans', loans });
 });
 
 router.get('/filter/:query', checkQueryParam, async (req, res) => {
@@ -69,7 +69,7 @@ router.get('/filter/:query', checkQueryParam, async (req, res) => {
         }
       }
     });
-    res.render('loansListing', { title: 'Checked Out Books', loans });
+    res.render('loanList', { title: 'Checked Out Books', loans });
   }
 
   if (query == 'overdue') {
@@ -92,7 +92,7 @@ router.get('/filter/:query', checkQueryParam, async (req, res) => {
         }
       }
     });
-    res.render('loansListing', { title: 'Overdue Loans', loans });
+    res.render('loanList', { title: 'Overdue Loans', loans });
   }
 });
 

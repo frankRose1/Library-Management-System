@@ -5,7 +5,6 @@ const { Op } = require('sequelize');
 const createError = require('../utils/createError');
 const { validatePatron } = require('../utils/validation');
 
-
 async function fetchPatrons(req, res) {
   const page = req.params.page || 1;
   const limit = 5;
@@ -116,8 +115,8 @@ router.post('/detail/:id', async (req, res) => {
 });
 
 //users can search by a patrons library_id or email. search is case insensitive
-router.post('/search', async (req, res) => {
-  const { search_query } = req.body;
+router.get('/search', async (req, res) => {
+  const { search_query } = req.query;
 
   const patrons = await Patron.findAll({
     where: {

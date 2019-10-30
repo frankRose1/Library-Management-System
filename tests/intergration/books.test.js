@@ -1,4 +1,4 @@
-const { execGet, execPost } = require('../utils/requests')
+const { execGet, execPost } = require('../utils/requests');
 const { initApp, tearDownApp } = require('../factory/app');
 const bookFactory = require('../factory/book');
 
@@ -60,19 +60,30 @@ describe('/books', () => {
     });
 
     it('should return a 400 for invalid data', async () => {
-      const res = await execPost(server, `/books/detail/${book.id}`, invalidBookData)
+      const res = await execPost(
+        server,
+        `/books/detail/${book.id}`,
+        invalidBookData
+      );
       expect(res.status).toBe(400);
     });
 
     it('should redirect and respond with a 302 for valid input and ID', async () => {
-      const res = await execPost(server, `/books/detail/${book.id}`, validBookData);
+      const res = await execPost(
+        server,
+        `/books/detail/${book.id}`,
+        validBookData
+      );
       expect(res.status).toBe(302);
     });
   });
 
-  describe('POST /search', () => {
+  describe('GET /search', () => {
     it('should return a 200 for a valid search query', async () => {
-      const res = await  execPost(server, '/books/search', { search_query: book.title })
+      const res = await execGet(
+        server,
+        `/books/search?search_query=${book.title}`
+      );
       expect(res.status).toBe(200);
     });
   });

@@ -36,7 +36,7 @@ describe('/patrons', () => {
 
   describe('GET /', () => {
     it('should return a list of patrons', async () => {
-      const res = await execGet(server, '/patrons')
+      const res = await execGet(server, '/patrons');
       expect(res.status).toBe(200);
     });
   });
@@ -63,25 +63,40 @@ describe('/patrons', () => {
 
   describe('POST /detail/:id', () => {
     it("should respond with a 404 if a patron doesn't exist", async () => {
-      const res = await execPost(server, `/patrons/detail/${patron.id + 20}` , {});
+      const res = await execPost(
+        server,
+        `/patrons/detail/${patron.id + 20}`,
+        {}
+      );
       expect(res.status).toBe(404);
       expect(res.notFound).toBe(true);
     });
 
     it('should respond with a 400 if invalid data is sent', async () => {
-      const res = await execPost(server, `/patrons/detail/${patron.id}` , invalidPatronData);
+      const res = await execPost(
+        server,
+        `/patrons/detail/${patron.id}`,
+        invalidPatronData
+      );
       expect(res.status).toBe(400);
     });
 
     it('should redirect and respond with a 302 for a valid ID and valid data', async () => {
-      const res = await execPost(server, `/patrons/detail/${patron.id}` , validPatronData);
+      const res = await execPost(
+        server,
+        `/patrons/detail/${patron.id}`,
+        validPatronData
+      );
       expect(res.status).toBe(302);
     });
   });
 
-  describe('POST /search', () => {
+  describe('GET /search', () => {
     it('should return a 200 for a valid search query', async () => {
-      const res = await execPost(server, '/patrons/search' , { search_query: patron.library_id })
+      const res = await execGet(
+        server,
+        `/patrons/search?search_query=${patron.library_id}`
+      );
       expect(res.status).toBe(200);
     });
   });

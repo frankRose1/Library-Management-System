@@ -8,7 +8,7 @@ services:
     restart: '${DOCKER_RESTART_POLICY:-unless-stopped}'
     ports:
       - '${DOCKER_POSTGRES_PORT:-127.0.0.1:5432}:5432'
-    stop_grace_period: '${DOCKER_STOP_GRACE_PERIOD:-3s}'
+    stop_grace_period: '${DOCKER_STOP_GRACE_PERIOD:-6}'
     volumes:
       - 'postgres:/var/lib/postgresql/data'
 
@@ -19,8 +19,8 @@ services:
     depends_on:
       - 'postgres'
     ports:
-     - '${PORT:-127.0.0.1:8000}:8000'
-    stop_grace_period: '${DOCKER_STOP_GRACE_PERIOD:-3s}'
+      - '${PORT:-127.0.0.1:8000}:8000'
+    stop_grace_period: '${DOCKER_STOP_GRACE_PERIOD:-6}'
     volumes:
       - '${DOCKER_WEB_VOLUME:-./public:/app/public}'
 

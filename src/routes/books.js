@@ -195,8 +195,8 @@ router.post('/detail/:id', async (req, res) => {
 });
 
 //Users can search a book by title or author. search is case insensitive
-router.post('/search', async (req, res) => {
-  const { search_query } = req.body;
+router.get('/search', async (req, res) => {
+  const { search_query } = req.query;
 
   const books = await Book.findAll({
     where: {
